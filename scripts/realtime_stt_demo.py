@@ -17,7 +17,7 @@ FRAME_SAMPLES = 512  # 512 samples * 2 bytes (int16) = 1024 bytes, Prisma's requ
 
 async def main(language_code: str) -> None:
     settings = get_settings()
-    provider = PrismaSTTProvider(api_key=settings.gnani_api_key, base_url=settings.prisma_base_url)
+    provider = PrismaSTTProvider(api_key=settings.gnani_api_key, base_url=settings.gnani_base_url)
 
     # to get the asyncio event loop from the callback thread as sounddevice uses a separate thread for the callback
     loop = asyncio.get_running_loop()

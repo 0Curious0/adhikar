@@ -1,0 +1,9 @@
+class TTSError(Exception):
+    """Base exception for TTS provider failures."""
+
+
+class TTSRequestError(TTSError):
+    def __init__(self, message: str, *, request_id: str | None = None, status_code: int | None = None):
+        super().__init__(message)
+        self.request_id = request_id
+        self.status_code = status_code

@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     gnani_api_key: str
-    prisma_base_url: str = "https://api.vachana.ai"
+    gnani_base_url: str = "https://api.vachana.ai"
 
 
 # tells that settings can be either a Settings object or None, and initializes it to None
