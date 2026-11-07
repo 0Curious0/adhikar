@@ -190,15 +190,64 @@
   },
 
   "grievance": {
-    "department": "Department of Women Welfare, Government of Uttar Pradesh",
-    "portal": "https://sspy-up.gov.in/",
-    "instructions": [
-      "Check the application and pension payment status on the official portal.",
-      "For delayed or missing payments, contact the responsible district-level Women Welfare Office.",
-      "For rejected applications, obtain the rejection reason and follow the designated grievance process.",
-      "Escalate unresolved grievances through the applicable UP government grievance channel."
+    "channels": [
+      {
+        "name": "UP Jansunwai - IGRS",
+        "type": "online_grievance_portal",
+        "url": "https://jansunwai.up.nic.in/",
+        "department": "Women Welfare Department",
+        "category": "पति की मृत्यु/हत्या निराश्रित महिला पेंशन योजना",
+        "first_level_authority": "District Probation Officer",
+        "registration": "Mobile OTP",
+        "features": [
+          "register_grievance",
+          "track_grievance",
+          "send_reminder",
+          "submit_feedback"
+        ],
+        "verification_status": "partially_verified"
+      },
+      {
+        "name": "UP CM Helpline",
+        "type": "phone",
+        "number": "1076",
+        "purpose": [
+          "grievance_registration",
+          "unresolved_grievance_escalation"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "SSPY Pension Portal",
+        "type": "pension_service_portal",
+        "url": "https://sspy-up.gov.in/",
+        "purpose": [
+          "pension_application",
+          "pension_status",
+          "scheme_information"
+        ],
+        "direct_complaint_feature": "needs_review",
+        "verification_status": "partially_verified"
+      },
+      {
+        "name": "District Probation Officer",
+        "type": "offline",
+        "purpose": [
+          "pension_application_issue",
+          "payment_issue",
+          "rejection",
+          "administrative_grievance"
+        ],
+        "verification_status": "needs_review"
+      }
     ],
-    "verification_status": "needs_review"
+    "instructions": "Register pension grievances through UP Jansunwai. Select the relevant Women Welfare Department pension category and retain the grievance reference number. Track the complaint, send reminders if it exceeds the stipulated timeline, and approach the District Probation Officer for local assistance. The CM Helpline 1076 is an alternative grievance channel.",
+    "verification_status": "partially_verified",
+    "sources": [
+      "https://jansunwai.up.nic.in/",
+      "https://jansunwai.up.nic.in/resources/pdf/Post_Category_Mapping.pdf",
+      "https://sspy-up.gov.in/"
+    ]
   },
 
   "sources": [

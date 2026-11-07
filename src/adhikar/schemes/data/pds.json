@@ -60,8 +60,50 @@
     "verification_status": "verified"
   },
   "grievance": {
-    "instructions": "NFSA provides for State Food Commissions and District Grievance Redressal Officers. Identify the correct state authority and current contact details before referring.",
-    "verification_status": "partially_verified"
+    "channels": [
+      {
+        "name": "State PDS Grievance Portal",
+        "type": "online",
+        "purpose": [
+          "ration_not_received",
+          "less_quantity_distributed",
+          "ration_card_issue",
+          "fair_price_shop_complaint"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "District Grievance Redressal Officer",
+        "type": "offline",
+        "purpose": [
+          "wrongful_denial_of_ration",
+          "nfsa_entitlement_violation",
+          "ration_distribution_complaint"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "State Food Commission",
+        "type": "appeal_authority",
+        "purpose": [
+          "unresolved_grievance",
+          "appeal_against_dgro_decision"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "State PDS Helpline",
+        "type": "phone",
+        "number": null,
+        "verification_status": "needs_review"
+      }
+    ],
+    "instructions": "For ration-related complaints, contact the State PDS grievance mechanism or District Grievance Redressal Officer. If the issue remains unresolved or you disagree with the decision, approach the State Food Commission. Helpline numbers and portal details depend on the state.",
+    "verification_status": "verified",
+    "sources": [
+      "https://dfpd.gov.in/faqs/en",
+      "https://nfsa.gov.in/"
+    ]
   },
   "sources": [
     {

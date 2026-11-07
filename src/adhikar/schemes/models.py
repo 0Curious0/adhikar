@@ -66,6 +66,23 @@ class Source(BaseModel):
     supports: str | list[str] | None = None
 
 
+class GrievanceChannel(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="allow")
+
+    name: str
+    type: str
+    verification_status: VerificationStatus
+
+
+class Grievance(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    channels: list[GrievanceChannel] = []
+    instructions: str
+    verification_status: VerificationStatus
+    sources: list[str] = []
+
+
 class SchemeDocument(BaseModel):
     model_config = ConfigDict(frozen=True, extra="allow")
 
@@ -82,7 +99,7 @@ class SchemeDocument(BaseModel):
     required_information: list[str] = []
     required_documents: list[Any] = []
     application: dict[str, Any] = {}
-    grievance: dict[str, Any] = {}
+    grievance: Grievance | None = None
     verification: dict[str, Any] = {}
     notes: list[str] = []
 

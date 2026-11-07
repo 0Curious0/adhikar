@@ -68,8 +68,45 @@
     "verification_status": "partially_verified"
   },
   "grievance": {
-    "instructions": "Use the PM-KISAN portal grievance facility and designated State/UT nodal officers; verify current contact details.",
-    "verification_status": "needs_review"
+    "channels": [
+      {
+        "name": "PM-KISAN Grievance Portal",
+        "type": "online",
+        "url": "https://pmkisan.gov.in/grievance.aspx",
+        "purpose": [
+          "installment_not_received",
+          "application_pending",
+          "registration_issue",
+          "beneficiary_details_error"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "CPGRAMS",
+        "type": "online",
+        "url": "https://pgportal.gov.in/",
+        "purpose": [
+          "unresolved_grievance",
+          "administrative_complaint"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "State Agriculture Department",
+        "type": "offline",
+        "purpose": [
+          "land_record_issue",
+          "beneficiary_verification_issue"
+        ],
+        "verification_status": "needs_review"
+      }
+    ],
+    "instructions": "Register complaints through the PM-KISAN grievance portal. For unresolved issues, use CPGRAMS or contact the local agriculture department. Keep the registration number for tracking.",
+    "verification_status": "verified",
+    "sources": [
+      "https://pmkisan.gov.in/",
+      "https://pgportal.gov.in/"
+    ]
   },
   "sources": [
     {

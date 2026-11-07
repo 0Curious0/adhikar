@@ -60,9 +60,63 @@
     "instructions": "Check beneficiary status in the official system. For eligible 70+ persons, follow the senior-citizen enrolment and Aadhaar e-KYC process.",
     "verification_status": "partially_verified"
   },
-  "grievance": {
-    "instructions": "Use the PM-JAY helpline/grievance mechanism or the State Health Agency/empanelled hospital grievance desk. Verify current contact details for the state.",
-    "verification_status": "needs_review"
+  "grievance":{
+      "channels": [
+      {
+        "name": "CGRMS Portal",
+        "type": "online",
+        "url": "https://cgrms.pmjay.gov.in/",
+        "purpose": [
+          "treatment_denial",
+          "hospital_demanding_payment",
+          "ayushman_card_issue",
+          "hospital_misconduct"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "Ayushman Bharat Helpline",
+        "type": "phone",
+        "number": "14555",
+        "purpose": [
+          "grievance_registration",
+          "scheme_information",
+          "beneficiary_assistance"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "Ayushman App",
+        "type": "mobile_app",
+        "feature": "Raise a Grievance",
+        "verification_status": "needs_review"
+      },
+      {
+        "name": "Hospital Ayushman Help Desk",
+        "type": "offline",
+        "purpose": [
+          "treatment_denial",
+          "cashless_treatment_issue"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "District and State Grievance Redressal Committees",
+        "type": "government_authority",
+        "purpose": [
+          "unresolved_grievance",
+          "appeal_against_decision"
+        ],
+        "verification_status": "verified"
+      }
+    ],
+    "instructions": "Register complaints through the CGRMS portal or call 14555. You can also approach the Ayushman help desk at an empanelled hospital. Unresolved complaints can be escalated through the District, State and National Grievance Redressal Committees. Treatment-denial complaints should be treated as urgent.",
+    "verification_status": "verified",
+    "sources": [
+      "https://cgrms.pmjay.gov.in/",
+      "https://hem.nha.gov.in/GrievanceRedressal.pdf",
+      "https://nha.gov.in/"
+    ]
   },
   "sources": [
     {

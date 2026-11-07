@@ -69,8 +69,55 @@
     "verification_status": "needs_review"
   },
   "grievance": {
-    "instructions": "Use the State/UT designated grievance and social audit mechanism; confirm local authority and current escalation path.",
-    "verification_status": "needs_review"
+    "channels": [
+      {
+        "name": "Local Implementing Authority",
+        "type": "offline",
+        "authorities": [
+          "Block Development Officer",
+          "Block Social Welfare Officer",
+          "Gram Panchayat",
+          "Municipality"
+        ],
+        "purpose": [
+          "delayed_payment",
+          "non_inclusion",
+          "wrongful_rejection",
+          "pension_stoppage"
+        ],
+        "verification_status": "needs_review"
+      },
+      {
+        "name": "NSAP Social Audit",
+        "type": "social_audit",
+        "purpose": [
+          "beneficiary_exclusion",
+          "payment_irregularities",
+          "implementation_issues",
+          "grievance_registration"
+        ],
+        "frequency": "Periodic; includes Pension Parishads or Sabha meetings",
+        "verification_status": "verified"
+      },
+      {
+        "name": "CPGRAMS",
+        "type": "online_grievance_portal",
+        "url": "https://pgportal.gov.in/",
+        "purpose": [
+          "unresolved_central_scheme_grievance"
+        ],
+        "tracking": true,
+        "appeal_facility": true,
+        "verification_status": "verified"
+      }
+    ],
+    "instructions": "Start with the local implementing authority or applicable state grievance mechanism. Use NSAP social audits to raise implementation and beneficiary-related grievances. Escalate appropriate unresolved central-scheme grievances through CPGRAMS. Confirm the applicable state-level appeal process.",
+    "verification_status": "partially_verified",
+    "sources": [
+      "https://nsap.dord.gov.in/circular.do?method=faq",
+      "https://rural.gov.in/sites/default/files/NSAP%20Social%20Audit%20Guidelines_english-2023_08022024.pdf",
+      "https://pgportal.gov.in/"
+    ]
   },
   "sources": [
     {

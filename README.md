@@ -25,7 +25,7 @@ MGNREGA; its actual provisions aren't verified yet, see `src/adhikar/schemes/dat
 |---|---|
 | STT provider (`adhikar.stt`) — REST + realtime streaming, Prisma v2.5 | Done, tested |
 | TTS provider (`adhikar.tts`) — REST + realtime streaming, Timbre v2.5 | Done, tested |
-| Scheme knowledge base (versioned per-scheme JSON) | 5 scheme JSON files drafted; models/loader not built |
+| Scheme knowledge base (`adhikar.schemes`) — 5 schemes, rule-based eligibility | Done, tested |
 | FastAPI backend | Not started |
 | Frontend | Not started |
 | WhatsApp bot integration | Not started |

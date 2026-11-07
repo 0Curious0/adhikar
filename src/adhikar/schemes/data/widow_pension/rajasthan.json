@@ -199,16 +199,67 @@
   },
 
   "grievance": {
-    "department": "Department of Social Justice and Empowerment, Rajasthan",
-    "portal": "https://ssp.rajasthan.gov.in/",
-    "helpline": [
-      "0141-5111007",
-      "0141-5111010",
-      "0141-2740637"
+    "channels": [
+      {
+        "name": "Rajasthan Sampark",
+        "type": "online_grievance_portal",
+        "url": "https://sampark.rajasthan.gov.in/",
+        "purpose": [
+          "delayed_pension_payment",
+          "pension_stoppage",
+          "application_rejection",
+          "bank_transfer_issue",
+          "verification_issue"
+        ],
+        "features": [
+          "register_grievance",
+          "track_grievance",
+          "send_reminder",
+          "submit_feedback"
+        ],
+        "tracking_number": true,
+        "verification_status": "verified"
+      },
+      {
+        "name": "Rajasthan Sampark Helpline",
+        "type": "phone",
+        "number": "181",
+        "toll_free": true,
+        "purpose": [
+          "grievance_registration",
+          "grievance_status",
+          "government_service_complaints"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "e-Mitra Centre",
+        "type": "assisted_offline_service",
+        "purpose": [
+          "assisted_grievance_registration",
+          "grievance_status_check"
+        ],
+        "verification_status": "needs_review"
+      },
+      {
+        "name": "Social Justice and Empowerment Department",
+        "type": "district_or_local_office",
+        "purpose": [
+          "pension_application_issue",
+          "payment_issue",
+          "sanction_issue",
+          "administrative_grievance"
+        ],
+        "verification_status": "needs_review"
+      }
     ],
-    "email": "ssp-rj@nic.in",
-    "instructions": "Use the official pension portal or contact the department for delayed, stopped or rejected pension payments.",
-    "verification_status": "needs_review"
+    "instructions": "Register pension-related grievances through Rajasthan Sampark or call the toll-free helpline 181. Save the grievance tracking number, monitor its status, and use the reminder facility if action is delayed. Citizens can seek assistance through e-Mitra centres or the local Social Justice and Empowerment Department office.",
+    "verification_status": "verified",
+    "sources": [
+      "https://sampark.rajasthan.gov.in/",
+      "https://sampark.rajasthan.gov.in/Docs/Sampark_Citizen_Manual.pdf",
+      "https://sectors.rajasthan.gov.in/pages/department-page/1433"
+    ]
   },
 
   "sources": [

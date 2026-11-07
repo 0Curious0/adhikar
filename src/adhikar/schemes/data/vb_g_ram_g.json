@@ -54,8 +54,53 @@
     "verification_status": "partially_verified"
   },
   "grievance": {
-    "instructions": "Use the grievance redressal mechanism under the Act and applicable state rules. Do not reuse old MGNREGA escalation details without confirming transition rules.",
-    "verification_status": "needs_review"
+    "channels": [
+      {
+        "name": "Gram Panchayat Office",
+        "type": "offline",
+        "purpose": [
+          "work_not_provided",
+          "job_card_issue",
+          "delayed_wages",
+          "worksite_facility_issue"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "Block Development Office",
+        "type": "offline",
+        "purpose": [
+          "unresolved_local_complaint",
+          "employment_denial",
+          "wage_nonpayment"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "District Grievance Redressal Authority",
+        "type": "district_authority",
+        "purpose": [
+          "unresolved_grievance",
+          "administrative_irregularity"
+        ],
+        "verification_status": "verified"
+      },
+      {
+        "name": "District Ombudsperson",
+        "type": "independent_authority",
+        "purpose": [
+          "implementation_complaint",
+          "wage_or_entitlement_dispute"
+        ],
+        "verification_status": "verified"
+      }
+    ],
+    "instructions": "Submit complaints at the Gram Panchayat, Block or District level regarding employment, job cards or wage payments. Keep the complaint acknowledgement. If the issue is not resolved, escalate it to the next higher authority or approach the District Ombudsperson.",
+    "verification_status": "verified",
+    "sources": [
+      "https://www.indiacode.nic.in/indiacode/handle/123456789/22478?view_type=browse",
+      "https://www.pib.gov.in/"
+    ]
   },
   "sources": [
     {
