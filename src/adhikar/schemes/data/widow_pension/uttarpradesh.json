@@ -1,0 +1,260 @@
+
+{
+  "schema_version": "1.0.0",
+  "scheme_id": "nirashrit_mahila_pension_uttar_pradesh",
+
+  "name": {
+    "en": "Uttar Pradesh Destitute Women Pension Scheme",
+    "hi": "उत्तर प्रदेश निराश्रित महिला पेंशन योजना"
+  },
+
+  "jurisdiction": {
+    "level": "state",
+    "state": "Uttar Pradesh",
+    "country": "IN"
+  },
+
+  "description": {
+    "en": "A Uttar Pradesh social security pension scheme providing financial assistance to eligible widowed and destitute women."
+  },
+
+  "benefits": {
+    "monthly_pension": {
+      "amount": 1000,
+      "currency": "INR",
+      "frequency": "monthly",
+      "payment_method": "DBT",
+      "reported_disbursement_cycle": "quarterly",
+      "reported_quarterly_amount": 3000,
+      "verification_status": "needs_review",
+      "source_ids": [
+        "UP-WIDOW-PENSION-BENEFIT"
+      ],
+      "note": "₹1,000 per month and quarterly disbursement are reported figures. Confirm the current sanctioned rate and payment schedule through an official government order or SSPY portal."
+    },
+
+    "proposed_revised_pension": {
+      "amount": 1500,
+      "currency": "INR",
+      "frequency": "monthly",
+      "status": "proposed_or_unconfirmed",
+      "verification_status": "needs_review",
+      "source_ids": [
+        "UP-WIDOW-PENSION-NEWS-2026"
+      ],
+      "note": "Do not present this amount as an approved entitlement without an official notification."
+    },
+
+    "payment_information": {
+      "method": "Direct Benefit Transfer",
+      "destination": "Beneficiary bank account",
+      "verification_status": "needs_review"
+    }
+  },
+
+  "eligibility_rules": [
+    {
+      "rule_id": "UP-WIDOW-AGE-01",
+      "field": "age_years",
+      "operator": "greater_than_or_equal",
+      "value": 18,
+      "verification_status": "verified",
+      "source_ids": [
+        "UP-WOMEN-WELFARE"
+      ]
+    },
+
+    {
+      "rule_id": "UP-WIDOW-STATUS-01",
+      "field": "marital_status",
+      "operator": "equals",
+      "value": "widowed",
+      "verification_status": "verified",
+      "source_ids": [
+        "UP-WOMEN-WELFARE"
+      ]
+    },
+
+    {
+      "rule_id": "UP-WIDOW-RESIDENCY-01",
+      "field": "state_residency",
+      "operator": "equals",
+      "value": "Uttar Pradesh",
+      "verification_status": "verified",
+      "source_ids": [
+        "UP-WOMEN-WELFARE"
+      ]
+    },
+
+    {
+      "rule_id": "UP-WIDOW-INCOME-01",
+      "field": "annual_family_income_inr",
+      "operator": "less_than_or_equal",
+      "value": 200000,
+      "verification_status": "verified",
+      "source_ids": [
+        "UP-WOMEN-WELFARE"
+      ],
+      "note": "Combined annual family income from all sources must not exceed ₹2,00,000."
+    },
+
+    {
+      "rule_id": "UP-WIDOW-OTHER-PENSION-01",
+      "field": "receives_other_government_pension",
+      "operator": "equals",
+      "value": false,
+      "verification_status": "verified",
+      "source_ids": [
+        "UP-WOMEN-WELFARE"
+      ],
+      "note": "Applicant must not receive another pension benefit from the State or Central Government, subject to the operative scheme rules."
+    }
+  ],
+
+  "required_information": [
+    "age_years",
+    "marital_status",
+    "state_residency",
+    "annual_family_income_inr",
+    "receives_other_government_pension"
+  ],
+
+  "required_documents": [
+    {
+      "document_id": "DOC-AADHAAR",
+      "name": "Aadhaar Card",
+      "purpose": "Identity and scheme-related identification",
+      "verification_status": "needs_review"
+    },
+    {
+      "document_id": "DOC-DEATH-CERTIFICATE",
+      "name": "Husband's Death Certificate",
+      "purpose": "Evidence of widow status",
+      "verification_status": "needs_review"
+    },
+    {
+      "document_id": "DOC-AGE",
+      "name": "Age Proof",
+      "examples": [
+        "Birth Certificate",
+        "Government-issued age proof"
+      ],
+      "verification_status": "needs_review"
+    },
+    {
+      "document_id": "DOC-DOMICILE",
+      "name": "Uttar Pradesh Residence Proof",
+      "purpose": "Evidence of state residency",
+      "verification_status": "needs_review"
+    },
+    {
+      "document_id": "DOC-INCOME",
+      "name": "Income Certificate",
+      "purpose": "Evidence of annual family income",
+      "verification_status": "needs_review"
+    },
+    {
+      "document_id": "DOC-BANK",
+      "name": "Bank Passbook or Bank Account Details",
+      "required_information": [
+        "account_number",
+        "ifsc_code"
+      ],
+      "purpose": "DBT pension payments",
+      "verification_status": "needs_review"
+    },
+    {
+      "document_id": "DOC-PHOTO",
+      "name": "Passport-size Photograph",
+      "verification_status": "needs_review"
+    }
+  ],
+
+  "application": {
+    "channels": [
+      "SSPY UP Pension Portal",
+      "Common Service Centre",
+      "Relevant local government office"
+    ],
+    "portal": "https://sspy-up.gov.in/",
+    "instructions": [
+      "Open the official SSPY UP pension portal.",
+      "Select the widow pension application option.",
+      "Fill in the applicant's personal, residency and income details.",
+      "Provide the requested bank account information.",
+      "Upload the documents requested by the official application form.",
+      "Submit the application and retain the registration number.",
+      "Use the portal to check application status."
+    ],
+    "verification_status": "partially_verified"
+  },
+
+  "grievance": {
+    "department": "Department of Women Welfare, Government of Uttar Pradesh",
+    "portal": "https://sspy-up.gov.in/",
+    "instructions": [
+      "Check the application and pension payment status on the official portal.",
+      "For delayed or missing payments, contact the responsible district-level Women Welfare Office.",
+      "For rejected applications, obtain the rejection reason and follow the designated grievance process.",
+      "Escalate unresolved grievances through the applicable UP government grievance channel."
+    ],
+    "verification_status": "needs_review"
+  },
+
+  "sources": [
+    {
+      "source_id": "UP-WOMEN-WELFARE",
+      "title": "Women Welfare Department - Government Programmes",
+      "publisher": "Department of Women Welfare, Government of Uttar Pradesh",
+      "url": "https://mahilakalyan.up.nic.in/en/OurProgram.aspx",
+      "supports": [
+        "Minimum age",
+        "Widow status",
+        "Uttar Pradesh residency",
+        "Annual family income limit",
+        "Restriction on receiving another government pension"
+      ]
+    },
+    {
+      "source_id": "UP-SSPY",
+      "title": "Integrated Social Pension Portal",
+      "publisher": "Government of Uttar Pradesh",
+      "url": "https://sspy-up.gov.in/",
+      "supports": [
+        "Official application portal",
+        "Application and pension status"
+      ]
+    },
+    {
+      "source_id": "UP-WIDOW-PENSION-BENEFIT",
+      "title": "Uttar Pradesh Widow Pension Benefit Information",
+      "publisher": "Secondary reporting",
+      "url": "https://growthora.co.in/blog/up-pension-scheme",
+      "supports": [
+        "Reported ₹1,000 monthly pension",
+        "Reported quarterly disbursement"
+      ]
+    },
+    {
+      "source_id": "UP-WIDOW-PENSION-NEWS-2026",
+      "title": "Uttar Pradesh Widow Pension Scheme Update",
+      "publisher": "India Today",
+      "url": "https://www.indiatoday.in/india/story/up-widow-pension-scheme-eligibility-documents-application-rs-1500-proposal-utrith-3022748-2026-10-22",
+      "supports": [
+        "Reported proposal to increase pension to ₹1,500"
+      ]
+    }
+  ],
+
+  "verification": {
+    "status": "partially_verified",
+    "last_checked": "2026-11-07",
+    "notes": [
+      "Eligibility criteria are attributed to the UP Women Welfare Department information page.",
+      "Current pension amount and disbursement frequency need confirmation through an official order.",
+      "The reported ₹1,500 increase is not treated as an approved benefit.",
+      "Required document list should be reconciled with the live SSPY application form.",
+      "Official beneficiary approval is determined by the competent government authority."
+    ]
+  }
+}

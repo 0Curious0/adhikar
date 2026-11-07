@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "scheme_id": "ignwps",
+  "name": {
+    "en": "Indira Gandhi National Widow Pension Scheme",
+    "hi": "इंदिरा गांधी राष्ट्रीय विधवा पेंशन योजना"
+  },
+  "jurisdiction": {
+    "level": "central",
+    "country": "IN"
+  },
+  "description": {
+    "en": "National Social Assistance Programme pension support for eligible widows."
+  },
+  "benefits": {
+    "amount": {
+      "value": 300,
+      "currency": "INR",
+      "period": "month",
+      "verification_status": "verified",
+      "source_ids": ["NSAP-PIB-2022"]
+    },
+    "age_80_plus_amount": {
+      "value": 500,
+      "currency": "INR",
+      "period": "month",
+      "verification_status": "verified",
+      "source_ids": ["NSAP-PIB-2022"]
+    },
+    "note": "These are central contributions, not necessarily the total pension paid; states may add their own contribution."
+  },
+  "eligibility_rules": [
+    {
+      "rule_id": "IGNWPS-AGE-01",
+      "field": "age_years",
+      "operator": "between_inclusive",
+      "value": [40, 79],
+      "verification_status": "verified",
+      "source_ids": ["NSAP-PIB-2022"]
+    },
+    {
+      "rule_id": "IGNWPS-BPL-01",
+      "field": "household_bpl_status",
+      "operator": "equals",
+      "value": true,
+      "verification_status": "verified",
+      "source_ids": ["NSAP-PIB-2022"]
+    },
+    {
+      "rule_id": "IGNWPS-AGE-02",
+      "field": "age_years",
+      "operator": "greater_than_or_equal",
+      "value": 80,
+      "verification_status": "verified",
+      "source_ids": ["NSAP-PIB-2022"],
+      "note": "Higher central contribution category; state implementation must be checked."
+    }
+  ],
+  "required_information": [
+    "age_years",
+    "household_bpl_status",
+    "state",
+    "widow_status",
+    "existing_pension_status"
+  ],
+  "application": {
+    "channel": "State/UT social welfare or NSAP implementing authority",
+    "instructions": "Application and documents are administered through the State/UT. Confirm the current state process before advising a user.",
+    "verification_status": "needs_review"
+  },
+  "grievance": {
+    "instructions": "Use the State/UT designated grievance and social audit mechanism; confirm local authority and current escalation path.",
+    "verification_status": "needs_review"
+  },
+  "sources": [
+    {
+      "source_id": "NSAP-PIB-2022",
+      "title": "NSAP scheme-wise eligibility and central assistance",
+      "publisher": "Press Information Bureau, Government of India",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1887438&lang=2&reg=48",
+      "checked_on": "2026-11-07",
+      "supports": "IGNWPS central eligibility band and central contribution"
+    },
+    {
+      "source_id": "NSAP-PIB-2026",
+      "title": "Recent NSAP scheme update",
+      "publisher": "Press Information Bureau, Government of India",
+      "url": "https://www.pib.gov.in/PressReleseDetailm.aspx?PRID=2323266&lang=1&reg=3",
+      "checked_on": "2026-11-07",
+      "supports": "Confirms widow pension scheme continues in existing form in the reported update"
+    }
+  ],
+  "verification": {
+    "status": "partially_verified",
+    "last_checked": "2026-11-07",
+    "verified_claims_only": true,
+    "warning": "A scheme-level status does not establish an individual's eligibility. Confirm the current state/UT implementation and official beneficiary record."
+  },
+  "notes": [
+    "The central amount is a contribution and should not be represented as the beneficiary's total pension.",
+    "State-specific eligibility, application and total pension amount must be stored separately."
+  ]
+}

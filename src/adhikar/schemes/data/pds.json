@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "scheme_id": "nfsa_targeted_public_distribution_system",
+  "name": {
+    "en": "National Food Security Act - Targeted Public Distribution System",
+    "hi": "राष्ट्रीय खाद्य सुरक्षा अधिनियम - लक्षित सार्वजनिक वितरण प्रणाली"
+  },
+  "jurisdiction": {
+    "level": "central_law_state_implementation",
+    "country": "IN"
+  },
+  "description": {
+    "en": "Foodgrain entitlements under NFSA for households identified by State/UT governments as Priority Households or Antyodaya Anna Yojana households."
+  },
+  "benefits": {
+    "phh_entitlement": {
+      "quantity_kg": 5,
+      "basis": "per_person_per_month",
+      "price": "free_under_current_PMGKAY_policy",
+      "verification_status": "verified",
+      "source_ids": ["DFPD-NFSA-FAQ"]
+    },
+    "aay_entitlement": {
+      "quantity_kg": 35,
+      "basis": "per_household_per_month",
+      "price": "free_under_current_PMGKAY_policy",
+      "verification_status": "verified",
+      "source_ids": ["DFPD-NFSA-FAQ"]
+    }
+  },
+  "eligibility_rules": [
+    {
+      "rule_id": "PDS-PHH-01",
+      "field": "nfsa_category",
+      "operator": "equals",
+      "value": "PHH",
+      "verification_status": "verified",
+      "source_ids": ["DFPD-NFSA-FAQ"]
+    },
+    {
+      "rule_id": "PDS-AAY-01",
+      "field": "nfsa_category",
+      "operator": "equals",
+      "value": "AAY",
+      "verification_status": "verified",
+      "source_ids": ["DFPD-NFSA-FAQ"]
+    }
+  ],
+  "required_information": [
+    "state",
+    "district",
+    "ration_card_number_optional",
+    "nfsa_category",
+    "household_member_count",
+    "fair_price_shop"
+  ],
+  "application": {
+    "channel": "State/UT Food and Civil Supplies Department / state ration-card portal",
+    "instructions": "Household identification and ration-card issuance are handled by the State/UT. Do not infer entitlement from income alone; check the active ration-card category and state record.",
+    "verification_status": "verified"
+  },
+  "grievance": {
+    "instructions": "NFSA provides for State Food Commissions and District Grievance Redressal Officers. Identify the correct state authority and current contact details before referring.",
+    "verification_status": "partially_verified"
+  },
+  "sources": [
+    {
+      "source_id": "DFPD-NFSA-FAQ",
+      "title": "NFSA and PDS FAQs",
+      "publisher": "Department of Food and Public Distribution",
+      "url": "https://dfpd.gov.in/faqs/en",
+      "checked_on": "2026-11-07",
+      "supports": "PHH/AAY entitlements, state role in household identification, ONORC"
+    }
+  ],
+  "verification": {
+    "status": "partially_verified",
+    "last_checked": "2026-11-07",
+    "verified_claims_only": true,
+    "warning": "A scheme-level status does not establish an individual's eligibility. Confirm the current state/UT implementation and official beneficiary record."
+  },
+  "notes": [
+    "NFSA coverage is state-specific; State/UT governments identify eligible households within their coverage limits.",
+    "One Nation One Ration Card enables portability for eligible NFSA beneficiaries; it does not create a new entitlement.",
+    "The current free-foodgrain policy is subject to the applicable government order and should be freshness-checked."
+  ]
+}

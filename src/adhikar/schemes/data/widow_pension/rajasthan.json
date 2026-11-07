@@ -1,0 +1,278 @@
+
+{
+  "schema_version": "1.0.0",
+  "scheme_id": "mukhya_mantri_ekal_nari_samman_pension_rajasthan",
+
+  "name": {
+    "en": "Mukhyamantri Ekal Nari Samman Pension Yojana",
+    "hi": "मुख्यमंत्री एकल नारी सम्मान पेंशन योजना"
+  },
+
+  "jurisdiction": {
+    "level": "state",
+    "state": "Rajasthan",
+    "country": "IN"
+  },
+
+  "description": {
+    "en": "A Rajasthan social security pension scheme providing monthly financial assistance to eligible widowed, divorced and abandoned women."
+  },
+
+  "benefits": {
+    "monthly_pension": {
+      "amount": 1450,
+      "currency": "INR",
+      "frequency": "monthly",
+      "payment_method": "DBT",
+      "payment_destination": "Beneficiary bank account",
+      "effective_period": "2026-27",
+      "verification_status": "needs_review",
+      "source_ids": [
+        "RAJ-PENSION-2026"
+      ],
+      "note": "Reported revised social security pension amount. Confirm the currently payable amount on RajSSP before presenting it as a guaranteed payment."
+    },
+
+    "age_based_benefit": {
+      "age_18_to_74": {
+        "amount": 1450,
+        "currency": "INR",
+        "frequency": "monthly",
+        "verification_status": "needs_review"
+      },
+      "age_75_and_above": {
+        "amount": 1500,
+        "currency": "INR",
+        "frequency": "monthly",
+        "verification_status": "needs_review",
+        "source_ids": [
+          "RAJ-ECONOMIC-REVIEW-2024"
+        ]
+      }
+    },
+
+    "payment_information": {
+      "method": "Direct Benefit Transfer",
+      "bank_account_requirement": "Payment is made through the state pension payment system.",
+      "jan_aadhaar_linkage": true,
+      "verification_status": "needs_review"
+    }
+  },
+
+  "additional_benefits": [
+    {
+      "benefit_id": "widow_remarriage_gift",
+      "name": {
+        "en": "Widow Remarriage Gift Scheme",
+        "hi": "विधवा पुनर्विवाह उपहार योजना"
+      },
+      "description": "Financial assistance to eligible widowed women receiving widow pension who remarry.",
+      "amount": 30000,
+      "currency": "INR",
+      "payment_type": "one_time",
+      "eligibility": [
+        "Must satisfy the applicable conditions of the Widow Remarriage Gift Scheme.",
+        "Must be an eligible widow pension beneficiary.",
+        "Must satisfy the applicable remarriage and application conditions."
+      ],
+      "application": {
+        "url": "https://www.india.gov.in/services/details/apply-for-benefits-under-the-widow-remarriage-gift-scheme-rajasthan",
+        "channel": "Rajasthan Social Justice and Empowerment Department"
+      },
+      "verification_status": "verified",
+      "source_ids": [
+        "RAJ-REMARRIAGE-GIFT"
+      ],
+      "note": "This is a separate scheme, not an automatic addition to monthly pension."
+    }
+  ],
+
+  "eligibility_rules": [
+    {
+      "rule_id": "RAJ-EKAL-AGE-01",
+      "field": "age_years",
+      "operator": "greater_than_or_equal",
+      "value": 18,
+      "verification_status": "verified",
+      "source_ids": [
+        "RAJ-EKAL-RULES-2024"
+      ]
+    },
+    {
+      "rule_id": "RAJ-EKAL-STATUS-01",
+      "field": "marital_status_category",
+      "operator": "in",
+      "value": [
+        "widowed",
+        "divorced",
+        "abandoned"
+      ],
+      "verification_status": "verified",
+      "source_ids": [
+        "RAJ-EKAL-RULES-2024"
+      ]
+    },
+    {
+      "rule_id": "RAJ-EKAL-RESIDENCY-01",
+      "field": "state_residency",
+      "operator": "equals",
+      "value": "Rajasthan",
+      "verification_status": "verified",
+      "source_ids": [
+        "RAJ-EKAL-RULES-2024"
+      ],
+      "note": "Applicant must be a native resident of Rajasthan and reside in the state."
+    },
+    {
+      "rule_id": "RAJ-EKAL-INCOME-01",
+      "field": "annual_income_inr",
+      "operator": "less_than",
+      "value": 48000,
+      "verification_status": "verified",
+      "source_ids": [
+        "RAJ-EKAL-RULES-2024"
+      ],
+      "note": "Annual income from all sources must be below ₹48,000, subject to the alternative qualifying categories specified in the rules."
+    },
+    {
+      "rule_id": "RAJ-EKAL-ALTERNATIVE-01",
+      "field": "special_eligibility_category",
+      "operator": "in",
+      "value": [
+        "bpl_family",
+        "antyodaya_family",
+        "sahariya_community",
+        "kathodi_community",
+        "khairwa_community",
+        "aastha_card_family",
+        "registered_hiv_aids_positive"
+      ],
+      "verification_status": "verified",
+      "source_ids": [
+        "RAJ-EKAL-RULES-2024"
+      ],
+      "note": "These categories are alternative eligibility pathways described in the Rajasthan rules."
+    },
+    {
+      "rule_id": "RAJ-EKAL-EXCLUSION-01",
+      "field": "applicant_or_son_government_employee_or_pensioner",
+      "operator": "equals",
+      "value": false,
+      "verification_status": "verified",
+      "source_ids": [
+        "RAJ-EKAL-RULES-2024"
+      ],
+      "note": "The rules specify exclusions involving the applicant or her son serving in or receiving pension from specified government bodies or undertakings."
+    }
+  ],
+
+  "required_information": [
+    "age_years",
+    "marital_status_category",
+    "state_residency",
+    "annual_income_inr",
+    "special_eligibility_category",
+    "applicant_or_son_government_employee_or_pensioner"
+  ],
+
+  "application": {
+    "channels": [
+      "Rajasthan Social Security Pension Portal",
+      "Rajasthan SSO Portal",
+      "e-Mitra kiosk"
+    ],
+    "portal": "https://ssp.rajasthan.gov.in/",
+    "instructions": [
+      "Submit an application through an available official application channel.",
+      "The application is processed under the Rajasthan Social Justice and Empowerment Department.",
+      "Use the official portal to check application and pension status."
+    ],
+    "auto_sanction": {
+      "supported": true,
+      "description": "The state has described an automated, paperless application and sanction process through integrated government systems.",
+      "verification_status": "needs_review",
+      "source_ids": [
+        "RAJ-AUTO-SANCTION"
+      ]
+    },
+    "verification_status": "partially_verified"
+  },
+
+  "grievance": {
+    "department": "Department of Social Justice and Empowerment, Rajasthan",
+    "portal": "https://ssp.rajasthan.gov.in/",
+    "helpline": [
+      "0141-5111007",
+      "0141-5111010",
+      "0141-2740637"
+    ],
+    "email": "ssp-rj@nic.in",
+    "instructions": "Use the official pension portal or contact the department for delayed, stopped or rejected pension payments.",
+    "verification_status": "needs_review"
+  },
+
+  "sources": [
+    {
+      "source_id": "RAJ-EKAL-RULES-2024",
+      "title": "Rajasthan Social Security Pension Rules - Ekal Nari eligibility",
+      "publisher": "Department of Social Justice and Empowerment, Rajasthan",
+      "url": "https://sje.rajasthan.gov.in/siteadmin/Uploads/202406061513245452.pdf",
+      "supports": [
+        "Minimum age",
+        "Marital status categories",
+        "Rajasthan residency",
+        "Income criteria",
+        "Alternative eligibility categories",
+        "Government employee and pensioner exclusions"
+      ]
+    },
+    {
+      "source_id": "RAJ-ECONOMIC-REVIEW-2024",
+      "title": "Economic Review 2023-24",
+      "publisher": "Finance Department, Rajasthan",
+      "url": "https://finance.rajasthan.gov.in/docs/budget/statebudget/2024-2025%20%28Modified%20Budget%29/EconomicReviewE.pdf",
+      "supports": [
+        "Historical age-based pension amount structure",
+        "₹1,500 monthly pension for beneficiaries aged 75 and above"
+      ]
+    },
+    {
+      "source_id": "RAJ-PENSION-2026",
+      "title": "Rajasthan social security pension increase, 2026",
+      "publisher": "Government of Rajasthan - reported departmental announcement",
+      "url": "https://government.economictimes.indiatimes.com/news/governance/rajasthan-expands-social-security-pension-to-over-91-lakh-beneficiaries-investing-16904-crore-annually/129673382",
+      "supports": [
+        "Reported increase of social security pension to ₹1,450 per month"
+      ]
+    },
+    {
+      "source_id": "RAJ-REMARRIAGE-GIFT",
+      "title": "Widow Remarriage Gift Scheme, Rajasthan",
+      "publisher": "National Portal of India",
+      "url": "https://www.india.gov.in/services/details/apply-for-benefits-under-the-widow-remarriage-gift-scheme-rajasthan",
+      "supports": [
+        "₹30,000 one-time remarriage assistance"
+      ]
+    },
+    {
+      "source_id": "RAJ-AUTO-SANCTION",
+      "title": "Rajasthan Ekal Nari pension application and sanction process",
+      "publisher": "Government of Rajasthan, Jaipur District Portal",
+      "url": "https://jaipur.rajasthan.gov.in/scheme/detail/109",
+      "supports": [
+        "Application processing and automated sanction information"
+      ]
+    }
+  ],
+
+  "verification": {
+    "status": "partially_verified",
+    "last_checked": "2026-11-07",
+    "notes": [
+      "The ₹1,450 revised amount requires confirmation against the current RajSSP payable-rate table.",
+      "The ₹1,500 age-75-plus rate is based on an older official economic review and needs current confirmation.",
+      "The remarriage gift is a separate benefit with separate eligibility and application conditions.",
+      "Historical age-based slabs should not be treated as current rates without an operative government order."
+    ]
+  }
+}

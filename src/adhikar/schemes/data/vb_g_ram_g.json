@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0.0",
+  "scheme_id": "vb_g_ram_g",
+  "name": {
+    "en": "Viksit Bharat - Guarantee for Rozgar and Ajeevika Mission (Gramin)",
+    "hi": "विकसित भारत - रोजगार और आजीविका मिशन (ग्रामीण)"
+  },
+  "jurisdiction": {
+    "level": "central_act_state_scheme_implementation",
+    "country": "IN"
+  },
+  "description": {
+    "en": "Rural wage-employment guarantee framework under the VB-G RAM G Act, 2025."
+  },
+  "benefits": {
+    "guaranteed_days": {
+      "value": 125,
+      "basis": "per_rural_household_per_financial_year",
+      "verification_status": "verified",
+      "source_ids": ["VBG-INDIACODE", "VBG-PIB-2026"]
+    }
+  },
+  "eligibility_rules": [
+    {
+      "rule_id": "VBG-RURAL-01",
+      "field": "household_resides_in_rural_area",
+      "operator": "equals",
+      "value": true,
+      "verification_status": "verified",
+      "source_ids": ["VBG-INDIACODE", "VBG-FAQ-2026"]
+    },
+    {
+      "rule_id": "VBG-ADULT-01",
+      "field": "adult_household_member_volunteers_for_unskilled_manual_work",
+      "operator": "equals",
+      "value": true,
+      "verification_status": "verified",
+      "source_ids": ["VBG-INDIACODE"]
+    }
+  ],
+  "required_information": [
+    "state",
+    "district",
+    "gram_panchayat",
+    "rural_household_status",
+    "adult_applicants",
+    "job_card_status",
+    "work_demand_date",
+    "work_demand_acknowledgement"
+  ],
+  "application": {
+    "channel": "Gram Panchayat / designated local implementing authority under the state-notified VB-G RAM G Scheme",
+    "instructions": "The Act is in force from 2026-07-01. State schemes and operational procedures apply; confirm the state notification, job-card process and local authority.",
+    "verification_status": "partially_verified"
+  },
+  "grievance": {
+    "instructions": "Use the grievance redressal mechanism under the Act and applicable state rules. Do not reuse old MGNREGA escalation details without confirming transition rules.",
+    "verification_status": "needs_review"
+  },
+  "sources": [
+    {
+      "source_id": "VBG-INDIACODE",
+      "title": "VB-G RAM G Act, 2025 (Act 36 of 2025)",
+      "publisher": "India Code, Government of India",
+      "url": "https://www.indiacode.nic.in/indiacode/handle/123456789/22478?view_type=browse",
+      "checked_on": "2026-11-07",
+      "supports": "Statutory framework and 125-day guarantee"
+    },
+    {
+      "source_id": "VBG-PIB-2026",
+      "title": "VB-G RAM G implementation and commencement",
+      "publisher": "Press Information Bureau, Ministry of Rural Development",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2287304&lang=1&reg=48",
+      "checked_on": "2026-11-07",
+      "supports": "Commenced nationwide in rural areas from 2026-07-01"
+    },
+    {
+      "source_id": "VBG-FAQ-2026",
+      "title": "VB-G RAM G Act, 2025 FAQs",
+      "publisher": "Press Information Bureau, Ministry of Rural Development",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2259712&lang=1&reg=1",
+      "checked_on": "2026-11-07",
+      "supports": "125-day guarantee and repeal of MGNREGA from 2026-07-01"
+    }
+  ],
+  "verification": {
+    "status": "partially_verified",
+    "last_checked": "2026-11-07",
+    "verified_claims_only": true,
+    "warning": "A scheme-level status does not establish an individual's eligibility. Confirm the current state/UT implementation and official beneficiary record."
+  },
+  "notes": [
+    "As of 2026-07-01, VB-G RAM G replaced MGNREGA; do not label this file as MGNREGA.",
+    "Wage rates are state-specific and notification-dependent; do not hard-code a single national wage amount.",
+    "The Act guarantees 125 days per rural household, not per individual worker.",
+    "Check the latest final rules and Rajasthan/UP state scheme notifications before implementing procedural rules."
+  ]
+}

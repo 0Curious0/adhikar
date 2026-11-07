@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "scheme_id": "ayushman_bharat_pmjay",
+  "name": {
+    "en": "Ayushman Bharat - Pradhan Mantri Jan Arogya Yojana",
+    "hi": "आयुष्मान भारत - प्रधानमंत्री जन आरोग्य योजना"
+  },
+  "jurisdiction": {
+    "level": "central_with_state_implementation",
+    "country": "IN"
+  },
+  "description": {
+    "en": "Government-funded health assurance for eligible beneficiary families, providing cashless secondary and tertiary hospitalization at empanelled hospitals."
+  },
+  "benefits": {
+    "hospitalization_cover": {
+      "value": 500000,
+      "currency": "INR",
+      "period": "family_per_year",
+      "verification_status": "needs_review",
+      "source_ids": ["PMJAY-PORTAL"]
+    },
+    "senior_citizen_70_plus": {
+      "value": 500000,
+      "currency": "INR",
+      "period": "as_per_NHA_senior_citizen_rules",
+      "verification_status": "verified",
+      "source_ids": ["PMJAY-70-FAQ"]
+    }
+  },
+  "eligibility_rules": [
+    {
+      "rule_id": "PMJAY-SENIOR-AGE-01",
+      "field": "age_years",
+      "operator": "greater_than_or_equal",
+      "value": 70,
+      "verification_status": "verified",
+      "source_ids": ["PMJAY-70-FAQ"],
+      "note": "Senior citizens aged 70+ qualify irrespective of socioeconomic status; Aadhaar-based e-KYC is required for enrolment."
+    },
+    {
+      "rule_id": "PMJAY-GENERAL-01",
+      "field": "official_beneficiary_database_match",
+      "operator": "equals",
+      "value": true,
+      "verification_status": "needs_review",
+      "source_ids": ["PMJAY-PORTAL"],
+      "note": "General-family eligibility must be checked against the official beneficiary database and applicable state rules."
+    }
+  ],
+  "required_information": [
+    "age_years",
+    "aadhaar_based_ekyc_status",
+    "state",
+    "official_beneficiary_database_match",
+    "existing_pmjay_card_status"
+  ],
+  "application": {
+    "channel": "Official PM-JAY beneficiary portal / designated enrolment channel / Common Service Centre or empanelled hospital",
+    "instructions": "Check beneficiary status in the official system. For eligible 70+ persons, follow the senior-citizen enrolment and Aadhaar e-KYC process.",
+    "verification_status": "partially_verified"
+  },
+  "grievance": {
+    "instructions": "Use the PM-JAY helpline/grievance mechanism or the State Health Agency/empanelled hospital grievance desk. Verify current contact details for the state.",
+    "verification_status": "needs_review"
+  },
+  "sources": [
+    {
+      "source_id": "PMJAY-70-FAQ",
+      "title": "FAQs related to benefits for senior citizens under AB-PMJAY",
+      "publisher": "National Health Authority",
+      "url": "https://nha.gov.in/img/resources/English_FAQs_related_to_the_benefits_for_senior_citizens.pdf",
+      "checked_on": "2026-11-07",
+      "supports": "70+ eligibility irrespective of economic status and Aadhaar e-KYC"
+    },
+    {
+      "source_id": "PMJAY-PORTAL",
+      "title": "Ayushman Bharat PM-JAY official portal",
+      "publisher": "National Health Authority",
+      "url": "https://pmjay.gov.in/",
+      "checked_on": "2026-11-07",
+      "supports": "Scheme overview and official beneficiary access; general family eligibility must be checked in official beneficiary system"
+    }
+  ],
+  "verification": {
+    "status": "partially_verified",
+    "last_checked": "2026-11-07",
+    "verified_claims_only": true,
+    "warning": "A scheme-level status does not establish an individual's eligibility. Confirm the current state/UT implementation and official beneficiary record."
+  },
+  "notes": [
+    "Do not claim PM-JAY covers routine OPD or all medical expenses; the benefit concerns covered hospitalization packages.",
+    "For already-covered PM-JAY families, senior-citizen benefit rules differ from other 70+ households; use the NHA FAQ and current operational instructions.",
+    "The general beneficiary eligibility criteria are not fully encoded in this file."
+  ]
+}

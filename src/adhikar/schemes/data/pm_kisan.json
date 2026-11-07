@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "scheme_id": "pm_kisan",
+  "name": {
+    "en": "Pradhan Mantri Kisan Samman Nidhi",
+    "hi": "प्रधानमंत्री किसान सम्मान निधि"
+  },
+  "jurisdiction": {
+    "level": "central_sector",
+    "country": "IN"
+  },
+  "description": {
+    "en": "Income support to eligible landholding farmer families with cultivable land, subject to scheme exclusions and verification."
+  },
+  "benefits": {
+    "amount": {
+      "value": 6000,
+      "currency": "INR",
+      "period": "year",
+      "instalments": 3,
+      "verification_status": "verified",
+      "source_ids": ["PMKISAN-GUIDELINES", "PMKISAN-SITE"]
+    }
+  },
+  "eligibility_rules": [
+    {
+      "rule_id": "PMKISAN-LAND-01",
+      "field": "family_owns_cultivable_land_as_per_state_land_records",
+      "operator": "equals",
+      "value": true,
+      "verification_status": "verified",
+      "source_ids": ["PMKISAN-GUIDELINES"]
+    },
+    {
+      "rule_id": "PMKISAN-EXCL-01",
+      "field": "institutional_landholder",
+      "operator": "equals",
+      "value": false,
+      "verification_status": "verified",
+      "source_ids": ["PMKISAN-GUIDELINES"]
+    },
+    {
+      "rule_id": "PMKISAN-EXCL-02",
+      "field": "any_member_in_exclusion_category",
+      "operator": "equals",
+      "value": false,
+      "verification_status": "verified",
+      "source_ids": ["PMKISAN-GUIDELINES"],
+      "note": "Exclusion categories include specified constitutional/public office holders, government employees (with stated class exceptions), certain pensioners, income-tax payers and practising professionals."
+    }
+  ],
+  "required_information": [
+    "state",
+    "land_record_owner_status",
+    "farmer_family_members",
+    "institutional_landholder",
+    "government_service_status",
+    "monthly_pension_inr",
+    "income_tax_payer_status",
+    "professional_practice_status",
+    "bank_account_status",
+    "aadhaar_ekyc_status"
+  ],
+  "application": {
+    "url": "https://pmkisan.gov.in/",
+    "channel": "PM-KISAN official portal / designated state agriculture authorities",
+    "instructions": "Use the official portal for registration/status and state verification. Do not treat land ownership alone as final approval.",
+    "verification_status": "partially_verified"
+  },
+  "grievance": {
+    "instructions": "Use the PM-KISAN portal grievance facility and designated State/UT nodal officers; verify current contact details.",
+    "verification_status": "needs_review"
+  },
+  "sources": [
+    {
+      "source_id": "PMKISAN-GUIDELINES",
+      "title": "Revised PM-KISAN Operational Guidelines",
+      "publisher": "Department of Agriculture and Farmers Welfare",
+      "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines%28English%29.pdf",
+      "checked_on": "2026-11-07",
+      "supports": "Landholding farmer family definition, annual support, exclusion categories"
+    },
+    {
+      "source_id": "PMKISAN-SITE",
+      "title": "PM-KISAN official scheme overview",
+      "publisher": "Department of Agriculture and Farmers Welfare",
+      "url": "https://pmkisan.gov.in/",
+      "checked_on": "2026-11-07",
+      "supports": "₹6,000 yearly in three equal instalments; exclusions"
+    }
+  ],
+  "verification": {
+    "status": "partially_verified",
+    "last_checked": "2026-11-07",
+    "verified_claims_only": true,
+    "warning": "A scheme-level status does not establish an individual's eligibility. Confirm the current state/UT implementation and official beneficiary record."
+  },
+  "notes": [
+    "Farmer family is defined in the guidelines as husband, wife and minor children owning cultivable land as per state/UT land records.",
+    "A person may appear to meet the broad definition but still be excluded; evaluate every exclusion category.",
+    "The operational guidelines source is dated; check later amendments before deploying exclusions as current rules."
+  ]
+}
