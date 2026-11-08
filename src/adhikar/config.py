@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -6,6 +8,8 @@ class Settings(BaseSettings):
 
     gnani_api_key: str
     gnani_base_url: str = "https://api.vachana.ai"
+    sarvam_api_key: str
+    profile_db_path: Path = Path("var/profiles.db")
 
 
 # tells that settings can be either a Settings object or None, and initializes it to None

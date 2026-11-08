@@ -132,7 +132,8 @@
       "source_ids": [
         "RAJ-EKAL-RULES-2024"
       ],
-      "note": "Annual income from all sources must be below ₹48,000, subject to the alternative qualifying categories specified in the rules."
+      "note": "Annual income from all sources must be below ₹48,000, subject to the alternative qualifying categories specified in the rules.",
+      "rule_group": "RAJ-EKAL-FINANCIAL-ELIGIBILITY"
     },
     {
       "rule_id": "RAJ-EKAL-ALTERNATIVE-01",
@@ -151,7 +152,8 @@
       "source_ids": [
         "RAJ-EKAL-RULES-2024"
       ],
-      "note": "These categories are alternative eligibility pathways described in the Rajasthan rules."
+      "note": "These categories are alternative eligibility pathways described in the Rajasthan rules.",
+      "rule_group": "RAJ-EKAL-FINANCIAL-ELIGIBILITY"
     },
     {
       "rule_id": "RAJ-EKAL-EXCLUSION-01",

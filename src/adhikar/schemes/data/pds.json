@@ -30,18 +30,10 @@
   },
   "eligibility_rules": [
     {
-      "rule_id": "PDS-PHH-01",
+      "rule_id": "PDS-CATEGORY-01",
       "field": "nfsa_category",
-      "operator": "equals",
-      "value": "PHH",
-      "verification_status": "verified",
-      "source_ids": ["DFPD-NFSA-FAQ"]
-    },
-    {
-      "rule_id": "PDS-AAY-01",
-      "field": "nfsa_category",
-      "operator": "equals",
-      "value": "AAY",
+      "operator": "in",
+      "value": ["PHH", "AAY"],
       "verification_status": "verified",
       "source_ids": ["DFPD-NFSA-FAQ"]
     }

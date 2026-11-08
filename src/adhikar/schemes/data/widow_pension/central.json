@@ -33,8 +33,8 @@
     {
       "rule_id": "IGNWPS-AGE-01",
       "field": "age_years",
-      "operator": "between_inclusive",
-      "value": [40, 79],
+      "operator": "greater_than_or_equal",
+      "value": 40,
       "verification_status": "verified",
       "source_ids": ["NSAP-PIB-2022"]
     },
@@ -45,15 +45,6 @@
       "value": true,
       "verification_status": "verified",
       "source_ids": ["NSAP-PIB-2022"]
-    },
-    {
-      "rule_id": "IGNWPS-AGE-02",
-      "field": "age_years",
-      "operator": "greater_than_or_equal",
-      "value": 80,
-      "verification_status": "verified",
-      "source_ids": ["NSAP-PIB-2022"],
-      "note": "Higher central contribution category; state implementation must be checked."
     }
   ],
   "required_information": [

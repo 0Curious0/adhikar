@@ -10,6 +10,7 @@ dependencies = [
     { name = "httpx" },
     { name = "numpy" },
     { name = "pydantic-settings" },
+    { name = "sarvamai" },
     { name = "sounddevice" },
     { name = "websockets" },
 ]
@@ -26,6 +27,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "numpy", specifier = ">=2.5.4" },
     { name = "pydantic-settings", specifier = ">=2.16.2" },
+    { name = "sarvamai", specifier = ">=0.1.44" },
     { name = "sounddevice", specifier = ">=0.5.6" },
     { name = "websockets", specifier = ">=17.3" },
 ]
@@ -467,6 +469,22 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/43/98/4e55c9c486404ec12373708d015ebce157966965a5ebe7f28ff2c784d41b/respx-0.23.1.tar.gz", hash = "sha256:242dcc6ce6b5b9bf621f5870c82a63997e8e82bc7c947f9ffe272b8f3dd5a780", size = 29243, upload-time = "2026-04-08T14:37:16.008Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1d/4a/221da6ca167db45693d8d26c7dc79ccfc978a440251bf6721c9aaf251ac0/respx-0.23.1-py2.py3-none-any.whl", hash = "sha256:b18004b029935384bccfa6d7d9d74b4ec9af73a081cc28600fffc0447f4b8c1a", size = 25557, upload-time = "2026-04-08T14:37:14.613Z" },
+]
+
+[[package]]
+name = "sarvamai"
+version = "0.1.44"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "pydantic-core" },
+    { name = "typing-extensions" },
+    { name = "websockets" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/96/2d/f7236217aa2489a348fe23b0afa11ed7a50c119a9f331d39752d9c6ad39a/sarvamai-0.1.44.tar.gz", hash = "sha256:a965f2d8dbfcd04c3a1ad3cc91b29787f5c2580375718c666beeb65742311d8c", size = 281174, upload-time = "2026-11-07T12:40:12.67Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/25/bd/dd2f68657682d52dd01c019972087f6111606725ec17b075336a14f4f5b1/sarvamai-0.1.44-py3-none-any.whl", hash = "sha256:0461eb9766fe396ab632646a1ceb2ca4b0daacb0373dce16e181555a04602e40", size = 584394, upload-time = "2026-11-07T12:40:11.039Z" },
 ]
 
 [[package]]

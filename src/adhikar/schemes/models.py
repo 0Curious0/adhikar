@@ -41,6 +41,9 @@ class EligibilityRule(BaseModel):
     verification_status: VerificationStatus
     source_ids: list[str] = []
     note: str | None = None
+    rule_group: str | None = None
+    """Rules sharing a `rule_group` are OR'd (any one passing satisfies the group); a rule with
+    no `rule_group` is AND'd against every other rule/group as before."""
 
     @model_validator(mode="after")
     def _check_value_shape(self) -> "EligibilityRule":
