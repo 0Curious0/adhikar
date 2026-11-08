@@ -83,6 +83,8 @@ def _build_json_schema(field_specs: dict[str, FieldSpec]) -> dict[str, Any]:
         prop: dict[str, Any] = {"type": _FIELD_TYPE_TO_JSON_SCHEMA_TYPE[spec.type]}
         if spec.type == FieldType.ENUM:
             prop["enum"] = spec.enum_values
+        if spec.description is not None:
+            prop["description"] = spec.description
         properties[name] = prop
 
     return {"type": "object", "properties": properties, "additionalProperties": False}

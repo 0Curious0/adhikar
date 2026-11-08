@@ -1,7 +1,7 @@
 from sarvamai import AsyncSarvamAI
 from sarvamai.core.api_error import ApiError
 
-from .base import DecisionProvider
+from .base import DecisionProvider, DecisionState
 from .exceptions import NLUError, NLURequestError
 from .models import ChoiceAnswer, DecisionQuestion
 
@@ -12,7 +12,7 @@ class SarvamPrismProvider(DecisionProvider):
     def __init__(self, api_key: str):
         self._client = AsyncSarvamAI(api_subscription_key=api_key)
 
-    async def decide(self, state: str, questions: dict[str, DecisionQuestion]) -> dict[str, ChoiceAnswer]:
+    async def decide(self, state: DecisionState, questions: dict[str, DecisionQuestion]) -> dict[str, ChoiceAnswer]:
         try:
             response = await self._client.decisions.create(
                 model=self.MODEL,

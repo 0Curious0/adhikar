@@ -50,6 +50,11 @@ class FieldSpec(BaseModel):
     field: str
     type: FieldType
     enum_values: list[str] | None = None
+    description: str | None = None
+    """Optional guidance for the reasoning model, surfaced as the JSON schema property's
+    `description`. Scheme-derived fields rarely need this — the field name is usually
+    self-explanatory. It matters for fields whose purpose isn't obvious from the name alone,
+    like a meta-field for detecting a scheme-switch request."""
 
     @model_validator(mode="after")
     def _check_enum_values_match_type(self) -> "FieldSpec":

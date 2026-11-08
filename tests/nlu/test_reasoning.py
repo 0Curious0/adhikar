@@ -68,6 +68,28 @@ async def test_extract_sends_schema_with_no_required_fields():
 
 
 @respx.mock
+async def test_extract_sends_field_description_when_set():
+    route = respx.post(URL).mock(return_value=_response(json.dumps({})))
+
+    provider = Sarvam105BReasoningProvider(api_key="test-key")
+    await provider.extract(
+        "hello",
+        {
+            "requested_scheme": FieldSpec(
+                field="requested_scheme",
+                type=FieldType.ENUM,
+                enum_values=["pm_kisan", "pds"],
+                description="The scheme the user wants to switch to, if explicitly asked.",
+            )
+        },
+    )
+
+    body = json.loads(route.calls.last.request.content)
+    prop = body["response_format"]["json_schema"]["schema"]["properties"]["requested_scheme"]
+    assert prop["description"] == "The scheme the user wants to switch to, if explicitly asked."
+
+
+@respx.mock
 async def test_extract_raises_nlu_request_error_on_api_error():
     respx.post(URL).mock(
         return_value=httpx.Response(400, json={"message": "bad request", "code": "invalid", "request_id": "req_1"})
