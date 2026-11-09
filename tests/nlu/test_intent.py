@@ -1,5 +1,5 @@
 from adhikar.nlu.base import DecisionProvider, DecisionState
-from adhikar.nlu.intent import classify_intent, classify_scheme
+from adhikar.nlu.intent import classify_intent, classify_requested_scheme, classify_scheme
 from adhikar.nlu.models import ChoiceAnswer, DecisionQuestion, Intent
 
 
@@ -45,7 +45,23 @@ async def test_classify_intent_passes_pinned_scheme_as_state_context():
     assert provider.last_state == {
         "utterance": "actually ask about PDS instead",
         "currently_discussing_scheme": "pm_kisan",
+        "just_asked_about": None,
     }
+
+
+async def test_classify_intent_passes_just_asked_about_as_state_context():
+    provider = FakeDecisionProvider(
+        ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={"update_info": 0.95})
+    )
+
+    await classify_intent(
+        provider,
+        "yes, we do",
+        pinned_scheme_id="pm_kisan",
+        just_asked_about="family_owns_cultivable_land_as_per_state_land_records",
+    )
+
+    assert provider.last_state["just_asked_about"] == "family_owns_cultivable_land_as_per_state_land_records"
 
 
 async def test_classify_intent_sends_all_four_intents_as_criteria():
@@ -86,3 +102,65 @@ async def test_classify_scheme_uses_scheme_descriptions_as_criteria():
     await classify_scheme(provider, "I want ration", descriptions)
 
     assert provider.last_questions["scheme"].criteria == descriptions
+
+
+async def test_classify_requested_scheme_returns_scheme_id_when_confident():
+    provider = FakeDecisionProvider(ChoiceAnswer(choice="pm_kisan", confidence=0.8, probabilities={}))
+
+    result = await classify_requested_scheme(
+        provider, "no, tell me about PM-KISAN instead", {"pm_kisan": "farmer income support", "pds": "ration"},
+        pinned_scheme_id="pds",
+    )
+
+    assert result == ("pm_kisan", True)
+
+
+async def test_classify_requested_scheme_returns_not_a_switch_when_not_switching():
+    # The explicit "not_switching" option exists so a plain fact statement ("I'm 45") doesn't get
+    # forced into one of the real scheme choices — decide() always returns a top choice among
+    # whatever options it's given.
+    provider = FakeDecisionProvider(ChoiceAnswer(choice="not_switching", confidence=0.95, probabilities={}))
+
+    result = await classify_requested_scheme(
+        provider, "I'm 45", {"pm_kisan": "farmer income support", "pds": "ration"}, pinned_scheme_id="pds"
+    )
+
+    assert result == (None, False)
+
+
+async def test_classify_requested_scheme_returns_unresolved_switch_when_switching_unspecified():
+    # "no, not this one" — wants to leave the current scheme but named no replacement. Distinct
+    # from not_switching: this IS a switch attempt, just an unresolved one, so callers (e.g. the
+    # orchestrator) know to ask "which scheme?" rather than treating it like a fact statement.
+    provider = FakeDecisionProvider(ChoiceAnswer(choice="switching_unspecified", confidence=0.9, probabilities={}))
+
+    result = await classify_requested_scheme(
+        provider, "no, not this one", {"pm_kisan": "farmer income support", "pds": "ration"}, pinned_scheme_id="pds"
+    )
+
+    assert result == (None, True)
+
+
+async def test_classify_requested_scheme_treats_low_confidence_real_choice_as_unresolved_switch():
+    # A real scheme was the top choice, just not confidently — still a switch attempt (unlike
+    # not_switching), so is_switch_attempt must stay True even though scheme_id comes back None.
+    provider = FakeDecisionProvider(ChoiceAnswer(choice="pm_kisan", confidence=0.1, probabilities={}))
+
+    result = await classify_requested_scheme(
+        provider, "hmm", {"pm_kisan": "farmer income support", "pds": "ration"}, pinned_scheme_id="pds"
+    )
+
+    assert result == (None, True)
+
+
+async def test_classify_requested_scheme_excludes_pinned_scheme_and_includes_meta_options():
+    provider = FakeDecisionProvider(ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}))
+    descriptions = {"pm_kisan": "farmer income support", "pds": "ration shop entitlement"}
+
+    await classify_requested_scheme(provider, "I want ration", descriptions, pinned_scheme_id="pds")
+
+    criteria = provider.last_questions["requested_scheme"].criteria
+    assert "pds" not in criteria
+    assert "pm_kisan" in criteria
+    assert "not_switching" in criteria
+    assert "switching_unspecified" in criteria

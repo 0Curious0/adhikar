@@ -1,10 +1,13 @@
-import { BookOpen, Headphones, MessageCircle, Phone } from 'lucide-react'
+import { BookOpen, Gavel, Globe, Headphones } from 'lucide-react'
+import whatsappLogo from '../assets/whatsapplogo.png'
 import { useStrings } from '../i18n'
 import type { LanguageCode } from '../types'
 
-// WhatsApp isn't integrated (deferred post-MVP) — the row is deliberately non-interactive, and
-// uses a neutral Lucide icon rather than WhatsApp's trademarked logo, which (like the State
-// Emblem) isn't ours to reproduce without authorization. Swap in a provided brand asset later.
+// WhatsApp isn't integrated (deferred post-MVP) — the row is deliberately non-interactive, even
+// though it now uses the real provided brand asset (whatsapplogo.png) rather than a neutral
+// Lucide icon. CPGRAMS/MyScheme are real external government portals (grievance redressal and
+// scheme discovery respectively), not part of this app's own backend — opened in a new tab so
+// the user's in-progress conversation here isn't lost by navigating away.
 export function NeedHelpCard(props: { languageCode: LanguageCode }) {
   const strings = useStrings(props.languageCode)
 
@@ -17,24 +20,35 @@ export function NeedHelpCard(props: { languageCode: LanguageCode }) {
 
       <ul className="support-list">
         <li>
-          <a href="tel:112" className="support-row">
+          <a href="https://pgportal.gov.in/" target="_blank" rel="noopener noreferrer" className="support-row">
             <span className="support-row__icon support-row__icon--pink">
-              <Phone size={18} aria-hidden="true" />
+              <Gavel size={18} aria-hidden="true" />
             </span>
             <span className="support-row__text">
-              <span className="support-row__label">{strings.helplineLabel}</span>
-              <span className="support-row__subtitle">{strings.helplineSubtitle}</span>
+              <span className="support-row__label">{strings.cpgramsLabel}</span>
+              <span className="support-row__subtitle">{strings.cpgramsSubtitle}</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="https://www.myscheme.gov.in/" target="_blank" rel="noopener noreferrer" className="support-row">
+            <span className="support-row__icon support-row__icon--pink">
+              <Globe size={18} aria-hidden="true" />
+            </span>
+            <span className="support-row__text">
+              <span className="support-row__label">{strings.mySchemeLabel}</span>
+              <span className="support-row__subtitle">{strings.mySchemeSubtitle}</span>
             </span>
           </a>
         </li>
         <li>
           <span className="support-row support-row--disabled" aria-disabled="true">
             <span className="support-row__icon support-row__icon--green">
-              <MessageCircle size={18} aria-hidden="true" />
+              <img src={whatsappLogo} alt="" className="support-row__icon-image" aria-hidden="true" />
             </span>
             <span className="support-row__text">
               <span className="support-row__label">{strings.whatsappLabel}</span>
-              <span className="support-row__subtitle">{strings.whatsappSubtitle}</span>
+              <span className="support-row__subtitle support-row__subtitle--coming-soon">{strings.whatsappSubtitle}</span>
             </span>
           </span>
         </li>

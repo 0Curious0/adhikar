@@ -88,10 +88,10 @@ class FakeDecisionProvider(DecisionProvider):
 class FakeReasoningProvider(ReasoningProvider):
     def __init__(self, result: dict[str, Any]):
         self._result = result
-        self.calls: list[tuple[str, dict[str, FieldSpec]]] = []
+        self.calls: list[tuple[str, dict[str, FieldSpec], str | None]] = []
 
-    async def extract(self, text: str, field_specs: dict[str, FieldSpec]) -> dict[str, Any]:
-        self.calls.append((text, field_specs))
+    async def extract(self, text: str, field_specs: dict[str, FieldSpec], *, context: str | None = None) -> dict[str, Any]:
+        self.calls.append((text, field_specs, context))
         return self._result
 
 
@@ -125,15 +125,15 @@ def _orchestrator(
     return orchestrator, store, conversation
 
 
-async def test_unrelated_returns_none_and_touches_nothing(tmp_path):
+async def test_unrelated_replies_instead_of_going_silent_and_touches_no_profile_state(tmp_path):
     orchestrator, store, conversation = _orchestrator(
         tmp_path, decision_answers={"intent": ChoiceAnswer(choice="unrelated", confidence=0.9, probabilities={})}
     )
 
     result = await orchestrator.handle_turn(user_id="u1", transcript="lol random", language_code="en-IN")
 
-    assert result is None
-    assert conversation.calls == []
+    assert result == "ok"
+    assert len(conversation.calls) == 1
     assert store.get("u1") == UserProfile(user_id="u1")
 
 
@@ -151,7 +151,10 @@ async def test_low_confidence_intent_asks_to_repeat(tmp_path):
 async def test_update_info_merges_facts_and_confirms(tmp_path):
     orchestrator, store, conversation = _orchestrator(
         tmp_path,
-        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
         reasoning_result={"age_years": 45},
         reply_text="Got it, you're 45.",
     )
@@ -163,10 +166,50 @@ async def test_update_info_merges_facts_and_confirms(tmp_path):
     assert "age_years: 45" in conversation.calls[0]["user_message"]
 
 
+async def test_update_info_scopes_field_specs_to_pinned_scheme_only(tmp_path):
+    # The regression this guards against: combining every scheme's fields into one extraction
+    # schema (the global `build_field_specs(schemes)` set) was found to both miss real facts and
+    # fabricate unrelated ones on the same input across repeated calls — scoping to just the
+    # pinned scheme's own fields is the fix.
+    orchestrator, store, _ = _orchestrator(
+        tmp_path,
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
+        reasoning_result={"annual_income_inr": 60000},
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_b"))
+
+    await orchestrator.handle_turn(user_id="u1", transcript="my income is 60000", language_code="en-IN")
+
+    sent_field_specs = orchestrator._reasoning_provider.calls[0][1]
+    assert set(sent_field_specs) == {"annual_income_inr", "special_eligibility_category", "state_residency"}
+
+
+async def test_update_info_uses_global_field_specs_when_no_scheme_pinned_yet(tmp_path):
+    orchestrator, store, _ = _orchestrator(
+        tmp_path,
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
+        reasoning_result={"age_years": 45},
+    )
+
+    await orchestrator.handle_turn(user_id="u1", transcript="I'm 45", language_code="en-IN")
+
+    sent_field_specs = orchestrator._reasoning_provider.calls[0][1]
+    assert set(sent_field_specs) == {"age_years", "annual_income_inr", "special_eligibility_category", "state_residency"}
+
+
 async def test_update_info_with_pinned_scheme_continues_with_next_missing_field(tmp_path):
     orchestrator, store, conversation = _orchestrator(
         tmp_path,
-        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
         reasoning_result={"annual_income_inr": 60000},
     )
     store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_b"))
@@ -181,7 +224,10 @@ async def test_update_info_with_pinned_scheme_continues_with_next_missing_field(
 async def test_update_info_with_pinned_scheme_continues_with_eligible_result(tmp_path):
     orchestrator, store, conversation = _orchestrator(
         tmp_path,
-        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
         reasoning_result={"age_years": 20},
     )
     store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_a"))
@@ -195,8 +241,11 @@ async def test_update_info_with_pinned_scheme_continues_with_eligible_result(tmp
 async def test_update_info_with_requested_scheme_pins_scheme(tmp_path):
     orchestrator, store, conversation = _orchestrator(
         tmp_path,
-        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
-        reasoning_result={"requested_scheme": "scheme_b"},
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="scheme_b", confidence=0.9, probabilities={}),
+        },
+        reasoning_result={},
     )
 
     await orchestrator.handle_turn(user_id="u1", transcript="actually ask about scheme b", language_code="en-IN")
@@ -205,18 +254,39 @@ async def test_update_info_with_requested_scheme_pins_scheme(tmp_path):
     assert "switched topic to: Scheme B" in conversation.calls[0]["user_message"]
 
 
-async def test_update_info_with_nothing_extracted_is_a_silent_no_op(tmp_path):
+async def test_update_info_with_nothing_extracted_and_no_scheme_pinned_asks_to_repeat(tmp_path):
     orchestrator, store, conversation = _orchestrator(
         tmp_path,
-        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
         reasoning_result={},
     )
 
     result = await orchestrator.handle_turn(user_id="u1", transcript="umm", language_code="en-IN")
 
-    assert result is None
-    assert conversation.calls == []
+    assert result == "ok"
+    assert "repeat" in conversation.calls[0]["system_prompt"].lower()
     assert store.get("u1") == UserProfile(user_id="u1")
+
+
+async def test_update_info_with_nothing_extracted_and_scheme_pinned_continues_eligibility(tmp_path):
+    orchestrator, store, conversation = _orchestrator(
+        tmp_path,
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
+        reasoning_result={},
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_b"))
+
+    result = await orchestrator.handle_turn(user_id="u1", transcript="umm", language_code="en-IN")
+
+    assert result == "ok"
+    assert "Ask about" in conversation.calls[0]["user_message"]
+    assert store.get("u1").pinned_scheme_id == "scheme_b"
 
 
 async def test_scheme_query_classifies_scheme_when_unpinned_then_asks_missing_field(tmp_path):
@@ -282,6 +352,10 @@ async def test_scheme_query_missing_fields_combines_all_groups_into_one_question
     assert "annual_income_inr" in message
     assert "special_eligibility_category" in message
     assert "state_residency" in message
+    # Yes/no fields need to be phrased so a natural reply restates the fact — extraction is
+    # stateless per-turn and has no memory of which question prompted a bare "yes"/"no".
+    assert "yes/no" in system_prompt
+    assert "restates the fact" in system_prompt
 
 
 async def test_scheme_query_eligible_reports_benefits(tmp_path):
@@ -383,8 +457,11 @@ async def test_scheme_query_reusing_pinned_scheme_does_not_log_again(tmp_path):
 async def test_update_info_switching_scheme_logs_activity_for_new_scheme_only(tmp_path):
     orchestrator, store, _ = _orchestrator(
         tmp_path,
-        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
-        reasoning_result={"requested_scheme": "scheme_b"},
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="scheme_b", confidence=0.9, probabilities={}),
+        },
+        reasoning_result={},
     )
     store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_a", facts={"age_years": 20}))
 
@@ -399,7 +476,10 @@ async def test_update_info_switching_scheme_logs_activity_for_new_scheme_only(tm
 async def test_update_info_without_scheme_switch_does_not_log_activity(tmp_path):
     orchestrator, store, _ = _orchestrator(
         tmp_path,
-        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
         reasoning_result={"age_years": 45},
     )
     store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_a"))
@@ -407,3 +487,135 @@ async def test_update_info_without_scheme_switch_does_not_log_activity(tmp_path)
     await orchestrator.handle_turn(user_id="u1", transcript="I'm 45", language_code="en-IN")
 
     assert orchestrator._activity_log.recent("u1") == []
+
+
+async def test_missing_fields_reply_persists_asked_fields(tmp_path):
+    orchestrator, store, _ = _orchestrator(
+        tmp_path, decision_answers={"intent": ChoiceAnswer(choice="scheme_query", confidence=0.9, probabilities={})}
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_b"))
+
+    await orchestrator.handle_turn(user_id="u1", transcript="am I eligible?", language_code="en-IN")
+
+    assert set(store.get("u1").last_asked_fields) == {
+        "annual_income_inr",
+        "special_eligibility_category",
+        "state_residency",
+    }
+
+
+async def test_eligible_reply_clears_asked_fields(tmp_path):
+    orchestrator, store, _ = _orchestrator(
+        tmp_path, decision_answers={"intent": ChoiceAnswer(choice="scheme_query", confidence=0.9, probabilities={})}
+    )
+    store.save(
+        UserProfile(user_id="u1", pinned_scheme_id="scheme_a", facts={"age_years": 20}, last_asked_fields=["age_years"])
+    )
+
+    await orchestrator.handle_turn(user_id="u1", transcript="am I eligible?", language_code="en-IN")
+
+    assert store.get("u1").last_asked_fields == []
+
+
+async def test_grievance_reply_clears_asked_fields(tmp_path):
+    orchestrator, store, _ = _orchestrator(
+        tmp_path, decision_answers={"intent": ChoiceAnswer(choice="grievance", confidence=0.9, probabilities={})}
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_b", last_asked_fields=["annual_income_inr"]))
+
+    await orchestrator.handle_turn(user_id="u1", transcript="my payment never came", language_code="en-IN")
+
+    assert store.get("u1").last_asked_fields == []
+
+
+async def test_update_info_passes_last_asked_fields_as_context_to_intent_and_extraction(tmp_path):
+    # The regression this guards against: a direct answer to a just-asked question ("yes, we
+    # own farmland") was being misrouted to SCHEME_QUERY (never reaching extraction at all), and
+    # separately, extraction itself had no way to attribute a short/vague reply to the right
+    # field without knowing what was asked. Both `classify_intent` and `extract_entities` need
+    # this context on every turn.
+    orchestrator, store, _ = _orchestrator(
+        tmp_path,
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="not_switching", confidence=0.9, probabilities={}),
+        },
+        reasoning_result={"annual_income_inr": 60000},
+    )
+    store.save(
+        UserProfile(
+            user_id="u1",
+            pinned_scheme_id="scheme_b",
+            last_asked_fields=["annual_income_inr", "special_eligibility_category"],
+        )
+    )
+
+    await orchestrator.handle_turn(user_id="u1", transcript="yes", language_code="en-IN")
+
+    intent_state = orchestrator._decision_provider.calls[0][0]
+    assert intent_state["just_asked_about"] == "annual_income_inr, special_eligibility_category"
+    assert orchestrator._reasoning_provider.calls[0][2] == "annual_income_inr, special_eligibility_category"
+
+
+async def test_update_info_discards_facts_when_switching_scheme(tmp_path):
+    # The regression this guards against: 105B was observed fabricating facts on turns that are
+    # purely a scheme-switch request (nothing real to extract), which then got merged into the
+    # profile and evaluated as if the user had actually stated them. Facts must be discarded,
+    # not merged, whenever a switch is also detected on the same turn.
+    orchestrator, store, conversation = _orchestrator(
+        tmp_path,
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="scheme_b", confidence=0.9, probabilities={}),
+        },
+        reasoning_result={"age_years": 99},
+    )
+
+    await orchestrator.handle_turn(user_id="u1", transcript="no, tell me about scheme b instead", language_code="en-IN")
+
+    profile = store.get("u1")
+    assert profile.pinned_scheme_id == "scheme_b"
+    assert profile.facts == {}
+    assert "age_years" not in conversation.calls[0]["user_message"]
+
+
+async def test_update_info_switching_unspecified_asks_which_scheme_instead_of_continuing_old_one(tmp_path):
+    # The gap this guards against: rejecting the current scheme without naming a replacement
+    # ("no, not this one") used to silently continue the old scheme instead of asking which one
+    # the user actually wants.
+    orchestrator, store, conversation = _orchestrator(
+        tmp_path,
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="switching_unspecified", confidence=0.9, probabilities={}),
+        },
+        reasoning_result={"age_years": 99},  # simulates a hallucinated fact on this kind of turn
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_a"))
+
+    result = await orchestrator.handle_turn(user_id="u1", transcript="no, not this one", language_code="en-IN")
+
+    assert result == "ok"
+    assert "which" in conversation.calls[0]["system_prompt"].lower()
+    assert "Scheme B" in conversation.calls[0]["user_message"]
+    assert "Scheme A" not in conversation.calls[0]["user_message"]
+    profile = store.get("u1")
+    assert profile.pinned_scheme_id == "scheme_a"
+    assert profile.facts == {}
+
+
+async def test_update_info_low_confidence_switch_also_asks_which_scheme(tmp_path):
+    orchestrator, store, conversation = _orchestrator(
+        tmp_path,
+        decision_answers={
+            "intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={}),
+            "requested_scheme": ChoiceAnswer(choice="scheme_b", confidence=0.1, probabilities={}),
+        },
+        reasoning_result={},
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_a"))
+
+    result = await orchestrator.handle_turn(user_id="u1", transcript="hmm, something else maybe", language_code="en-IN")
+
+    assert result == "ok"
+    assert store.get("u1").pinned_scheme_id == "scheme_a"

@@ -1,4 +1,4 @@
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Mic, Square } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { postChat } from '../api'
 import { useDictation } from '../hooks/useDictation'
@@ -15,7 +15,7 @@ export function ChatMode(props: {
 }) {
   const strings = useStrings(props.languageCode)
   const dictation = useDictation(props.languageCode)
-  const { speak } = useReplyPlayback(props.languageCode)
+  const { speak, error: playbackError } = useReplyPlayback(props.languageCode)
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState<string | null>(null)
 
@@ -60,7 +60,7 @@ export function ChatMode(props: {
     }
   }
 
-  const activeError = sendError ?? dictation.error
+  const activeError = sendError ?? dictation.error ?? playbackError
 
   return (
     <div className="chat-mode">
@@ -71,6 +71,8 @@ export function ChatMode(props: {
         placeholder={strings.chatPlaceholder}
         rows={3}
       />
+      {sending && <p className="chat-mode__status">{strings.thinking}</p>}
+
       {activeError && (
         <p className="chat-mode__error" role="alert">
           <AlertCircle size={14} aria-hidden="true" />
@@ -83,7 +85,12 @@ export function ChatMode(props: {
           className={`btn btn--secondary${dictation.isDictating ? ' btn--active' : ''}`}
           onClick={toggleDictation}
         >
-          {dictation.isDictating ? strings.stopDictation : strings.dictate}
+          {dictation.isDictating ? (
+            <Square size={16} aria-hidden="true" />
+          ) : (
+            <Mic size={16} aria-hidden="true" />
+          )}
+          <span>{dictation.isDictating ? strings.stopDictation : strings.dictate}</span>
         </button>
         <button
           type="button"

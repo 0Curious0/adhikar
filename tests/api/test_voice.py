@@ -15,6 +15,21 @@ class FakeOrchestrator:
         return self._reply
 
 
+class RaisingOrchestrator:
+    async def handle_turn(self, *, user_id: str, transcript: str, language_code: str) -> str | None:
+        raise RuntimeError("boom")
+
+
+class RaisingSTTProvider:
+    async def transcribe(self, audio: bytes, *, language_code: str, output_style=None, filename="audio.wav"):
+        raise RuntimeError("boom")
+
+
+class RaisingTTSProvider:
+    async def synthesize(self, text: str, *, language_code: str, voice: str, speed=1.0, audio_config=None) -> bytes:
+        raise RuntimeError("boom")
+
+
 class FakeSTTProvider:
     def __init__(self, transcript: str):
         self._transcript = transcript
@@ -107,3 +122,37 @@ async def test_voice_returns_no_content_when_orchestrator_has_nothing_to_say():
     assert response.status_code == 204
     assert response.content == b""
     assert tts.calls == []
+
+
+async def test_voice_synthesizes_fallback_reply_when_orchestrator_raises():
+    orchestrator = RaisingOrchestrator()
+    stt = FakeSTTProvider(transcript="kya main patr hoon")
+    tts = FakeTTSProvider()
+
+    response = await _post_voice(orchestrator, stt, tts)
+
+    assert response.status_code == 200
+    assert tts.calls[0]["text"] == "क्षमा करें, कुछ गड़बड़ी हुई। कृपया फिर से कोशिश करें।"
+
+
+async def test_voice_synthesizes_fallback_reply_when_stt_raises():
+    orchestrator = FakeOrchestrator(reply="unreachable")
+    stt = RaisingSTTProvider()
+    tts = FakeTTSProvider()
+
+    response = await _post_voice(orchestrator, stt, tts)
+
+    assert response.status_code == 200
+    assert tts.calls[0]["text"] == "क्षमा करें, कुछ गड़बड़ी हुई। कृपया फिर से कोशिश करें।"
+    assert orchestrator.calls == []
+
+
+async def test_voice_returns_no_content_when_even_fallback_synthesis_fails():
+    orchestrator = RaisingOrchestrator()
+    stt = FakeSTTProvider(transcript="kya main patr hoon")
+    tts = RaisingTTSProvider()
+
+    response = await _post_voice(orchestrator, stt, tts)
+
+    assert response.status_code == 204
+    assert response.content == b""

@@ -35,8 +35,10 @@ export interface Strings {
   statusMissing: string
   dataSecureTitle: string
   needHelpTitle: string
-  helplineLabel: string
-  helplineSubtitle: string
+  cpgramsLabel: string
+  cpgramsSubtitle: string
+  mySchemeLabel: string
+  mySchemeSubtitle: string
   whatsappLabel: string
   whatsappSubtitle: string
   userGuideLabel: string
@@ -59,6 +61,10 @@ export interface Strings {
   step4Body: string
   privacyNote: string
   footerTagline: string
+  /** `{scheme}` is replaced with the scheme's (server-localized, en/hi-only) name — see
+   * App.tsx's handleSelectScheme. The surrounding sentence is fully localized here regardless. */
+  askAboutSchemeTemplate: string
+  continueEligibilityTemplate: string
 }
 
 export const STRINGS: Record<LanguageCode, Strings> = {
@@ -96,8 +102,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'More info needed',
     dataSecureTitle: 'Your data is secure',
     needHelpTitle: 'Need Help?',
-    helplineLabel: 'Helpline',
-    helplineSubtitle: '112 (Integrated Emergency Helpline)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'File a grievance online',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'Explore all government schemes',
     whatsappLabel: 'WhatsApp',
     whatsappSubtitle: 'Coming soon',
     userGuideLabel: 'User Guide',
@@ -120,6 +128,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'Your answers are saved, so you can pick up the conversation whenever you return.',
     privacyNote: 'We only use your information to help with your request.',
     footerTagline: 'Your Rights. Our Support.',
+    askAboutSchemeTemplate: "Tell me about {scheme} and check if I'm eligible.",
+    continueEligibilityTemplate: 'Continue checking my eligibility for {scheme}.',
   },
   'hi-IN': {
     tagline: 'आपके अधिकार। हमारा सहयोग।',
@@ -155,8 +165,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'और जानकारी चाहिए',
     dataSecureTitle: 'आपका डेटा सुरक्षित है',
     needHelpTitle: 'सहायता चाहिए?',
-    helplineLabel: 'हेल्पलाइन',
-    helplineSubtitle: '112 (एकीकृत आपातकालीन हेल्पलाइन)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'ऑनलाइन शिकायत दर्ज करें',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'सभी सरकारी योजनाएं देखें',
     whatsappLabel: 'व्हाट्सएप',
     whatsappSubtitle: 'जल्द आ रहा है',
     userGuideLabel: 'उपयोगकर्ता गाइड',
@@ -179,6 +191,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'आपके जवाब सुरक्षित रहते हैं, ताकि आप जब चाहें बातचीत जारी रख सकें।',
     privacyNote: 'हम आपकी जानकारी का उपयोग केवल आपके अनुरोध में मदद के लिए करते हैं।',
     footerTagline: 'आपके अधिकार। हमारा सहयोग।',
+    askAboutSchemeTemplate: 'मुझे {scheme} के बारे में बताएं और जांचें कि क्या मैं पात्र हूं।',
+    continueEligibilityTemplate: '{scheme} के लिए मेरी पात्रता जांचना जारी रखें।',
   },
   'ta-IN': {
     tagline: 'உங்கள் உரிமைகள். எங்கள் ஆதரவு.',
@@ -214,8 +228,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'மேலும் தகவல் தேவை',
     dataSecureTitle: 'உங்கள் தரவு பாதுகாப்பானது',
     needHelpTitle: 'உதவி வேண்டுமா?',
-    helplineLabel: 'உதவி எண்',
-    helplineSubtitle: '112 (ஒருங்கிணைந்த அவசர உதவி எண்)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'ஆன்லைனில் புகார் பதிவு செய்யுங்கள்',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'அனைத்து அரசு திட்டங்களையும் ஆராயுங்கள்',
     whatsappLabel: 'வாட்ஸ்அப்',
     whatsappSubtitle: 'விரைவில் வருகிறது',
     userGuideLabel: 'பயனர் வழிகாட்டி',
@@ -238,6 +254,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'உங்கள் பதில்கள் சேமிக்கப்படும், எனவே நீங்கள் திரும்பும்போது உரையாடலைத் தொடரலாம்.',
     privacyNote: 'உங்கள் கோரிக்கைக்கு உதவவே உங்கள் தகவலை நாங்கள் பயன்படுத்துகிறோம்.',
     footerTagline: 'உங்கள் உரிமைகள். எங்கள் ஆதரவு.',
+    askAboutSchemeTemplate: '{scheme} பற்றி சொல்லுங்கள், நான் தகுதியுடையவரா என்று சரிபார்க்கவும்.',
+    continueEligibilityTemplate: '{scheme}க்கான எனது தகுதியை சரிபார்ப்பதைத் தொடரவும்.',
   },
   'te-IN': {
     tagline: 'మీ హక్కులు. మా మద్దతు.',
@@ -273,8 +291,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'మరింత సమాచారం అవసరం',
     dataSecureTitle: 'మీ డేటా సురక్షితం',
     needHelpTitle: 'సహాయం కావాలా?',
-    helplineLabel: 'హెల్ప్‌లైన్',
-    helplineSubtitle: '112 (సమీకృత అత్యవసర హెల్ప్‌లైన్)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'ఆన్‌లైన్‌లో ఫిర్యాదు నమోదు చేయండి',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'అన్ని ప్రభుత్వ పథకాలను అన్వేషించండి',
     whatsappLabel: 'వాట్సాప్',
     whatsappSubtitle: 'త్వరలో వస్తుంది',
     userGuideLabel: 'వినియోగదారు గైడ్',
@@ -297,6 +317,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'మీ సమాధానాలు సేవ్ చేయబడతాయి, కాబట్టి మీరు తిరిగి వచ్చినప్పుడు సంభాషణను కొనసాగించవచ్చు.',
     privacyNote: 'మేము మీ సమాచారాన్ని మీ అభ్యర్థనకు సహాయం చేయడానికి మాత్రమే ఉపయోగిస్తాము.',
     footerTagline: 'మీ హక్కులు. మా మద్దతు.',
+    askAboutSchemeTemplate: '{scheme} గురించి చెప్పండి మరియు నేను అర్హుడినా అని తనిఖీ చేయండి.',
+    continueEligibilityTemplate: '{scheme} కోసం నా అర్హతను తనిఖీ చేయడం కొనసాగించండి.',
   },
   'bn-IN': {
     tagline: 'আপনার অধিকার। আমাদের সহায়তা।',
@@ -332,8 +354,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'আরও তথ্য প্রয়োজন',
     dataSecureTitle: 'আপনার তথ্য সুরক্ষিত',
     needHelpTitle: 'সাহায্য দরকার?',
-    helplineLabel: 'হেল্পলাইন',
-    helplineSubtitle: '১১২ (সমন্বিত জরুরি হেল্পলাইন)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'অনলাইনে অভিযোগ দায়ের করুন',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'সব সরকারি প্রকল্প দেখুন',
     whatsappLabel: 'হোয়াটসঅ্যাপ',
     whatsappSubtitle: 'শীঘ্রই আসছে',
     userGuideLabel: 'ব্যবহারকারী গাইড',
@@ -356,6 +380,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'আপনার উত্তরগুলি সংরক্ষিত থাকে, যাতে আপনি ফিরে এলে কথোপকথন চালিয়ে যেতে পারেন।',
     privacyNote: 'আমরা আপনার তথ্য শুধুমাত্র আপনার অনুরোধে সাহায্য করতে ব্যবহার করি।',
     footerTagline: 'আপনার অধিকার। আমাদের সহায়তা।',
+    askAboutSchemeTemplate: 'আমাকে {scheme} সম্পর্কে বলুন এবং আমি যোগ্য কিনা পরীক্ষা করুন।',
+    continueEligibilityTemplate: '{scheme}-এর জন্য আমার যোগ্যতা পরীক্ষা করা চালিয়ে যান।',
   },
   'gu-IN': {
     tagline: 'તમારા અધિકારો. અમારો સહયોગ.',
@@ -391,8 +417,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'વધુ માહિતીની જરૂર છે',
     dataSecureTitle: 'તમારો ડેટા સુરક્ષિત છે',
     needHelpTitle: 'મદદ જોઈએ છે?',
-    helplineLabel: 'હેલ્પલાઇન',
-    helplineSubtitle: '૧૧૨ (સંકલિત કટોકટી હેલ્પલાઇન)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'ઓનલાઈન ફરિયાદ નોંધાવો',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'બધી સરકારી યોજનાઓ શોધો',
     whatsappLabel: 'વોટ્સએપ',
     whatsappSubtitle: 'ટૂંક સમયમાં આવી રહ્યું છે',
     userGuideLabel: 'વપરાશકર્તા માર્ગદર્શિકા',
@@ -415,6 +443,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'તમારા જવાબો સાચવવામાં આવે છે, જેથી તમે પાછા આવો ત્યારે વાતચીત ચાલુ રાખી શકો.',
     privacyNote: 'અમે તમારી માહિતીનો ઉપયોગ ફક્ત તમારી વિનંતીમાં મદદ કરવા માટે કરીએ છીએ.',
     footerTagline: 'તમારા અધિકારો. અમારો સહયોગ.',
+    askAboutSchemeTemplate: 'મને {scheme} વિશે જણાવો અને ચકાસો કે હું પાત્ર છું કે નહીં.',
+    continueEligibilityTemplate: '{scheme} માટે મારી પાત્રતા ચકાસવાનું ચાલુ રાખો.',
   },
   'kn-IN': {
     tagline: 'ನಿಮ್ಮ ಹಕ್ಕುಗಳು. ನಮ್ಮ ಬೆಂಬಲ.',
@@ -450,8 +480,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'ಹೆಚ್ಚಿನ ಮಾಹಿತಿ ಬೇಕು',
     dataSecureTitle: 'ನಿಮ್ಮ ಡೇಟಾ ಸುರಕ್ಷಿತವಾಗಿದೆ',
     needHelpTitle: 'ಸಹಾಯ ಬೇಕೇ?',
-    helplineLabel: 'ಸಹಾಯವಾಣಿ',
-    helplineSubtitle: '೧೧೨ (ಸಂಯೋಜಿತ ತುರ್ತು ಸಹಾಯವಾಣಿ)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ದೂರು ದಾಖಲಿಸಿ',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'ಎಲ್ಲಾ ಸರ್ಕಾರಿ ಯೋಜನೆಗಳನ್ನು ಅನ್ವೇಷಿಸಿ',
     whatsappLabel: 'ವಾಟ್ಸಾಪ್',
     whatsappSubtitle: 'ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿದೆ',
     userGuideLabel: 'ಬಳಕೆದಾರ ಮಾರ್ಗದರ್ಶಿ',
@@ -474,6 +506,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'ನಿಮ್ಮ ಉತ್ತರಗಳನ್ನು ಉಳಿಸಲಾಗುತ್ತದೆ, ಆದ್ದರಿಂದ ನೀವು ಹಿಂತಿರುಗಿದಾಗ ಸಂಭಾಷಣೆಯನ್ನು ಮುಂದುವರಿಸಬಹುದು.',
     privacyNote: 'ನಾವು ನಿಮ್ಮ ಮಾಹಿತಿಯನ್ನು ನಿಮ್ಮ ವಿನಂತಿಗೆ ಸಹಾಯ ಮಾಡಲು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ.',
     footerTagline: 'ನಿಮ್ಮ ಹಕ್ಕುಗಳು. ನಮ್ಮ ಬೆಂಬಲ.',
+    askAboutSchemeTemplate: '{scheme} ಬಗ್ಗೆ ನನಗೆ ತಿಳಿಸಿ ಮತ್ತು ನಾನು ಅರ್ಹನೇ ಎಂದು ಪರಿಶೀಲಿಸಿ.',
+    continueEligibilityTemplate: '{scheme} ಗಾಗಿ ನನ್ನ ಅರ್ಹತೆಯನ್ನು ಪರಿಶೀಲಿಸುವುದನ್ನು ಮುಂದುವರಿಸಿ.',
   },
   'ml-IN': {
     tagline: 'നിങ്ങളുടെ അവകാശങ്ങൾ. ഞങ്ങളുടെ പിന്തുണ.',
@@ -509,8 +543,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'കൂടുതൽ വിവരങ്ങൾ ആവശ്യമാണ്',
     dataSecureTitle: 'നിങ്ങളുടെ ഡാറ്റ സുരക്ഷിതമാണ്',
     needHelpTitle: 'സഹായം വേണോ?',
-    helplineLabel: 'ഹെൽപ്‌ലൈൻ',
-    helplineSubtitle: '112 (ഏകീകൃത അടിയന്തര ഹെൽപ്‌ലൈൻ)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'ഓൺലൈനായി പരാതി ഫയൽ ചെയ്യൂ',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'എല്ലാ സർക്കാർ പദ്ധതികളും പരിശോധിക്കൂ',
     whatsappLabel: 'വാട്സ്ആപ്പ്',
     whatsappSubtitle: 'ഉടൻ വരുന്നു',
     userGuideLabel: 'ഉപയോക്തൃ ഗൈഡ്',
@@ -533,6 +569,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'നിങ്ങളുടെ ഉത്തരങ്ങൾ സംരക്ഷിക്കപ്പെടും, അതിനാൽ നിങ്ങൾ തിരിച്ചുവരുമ്പോൾ സംഭാഷണം തുടരാം.',
     privacyNote: 'നിങ്ങളുടെ അഭ്യർത്ഥനയെ സഹായിക്കാൻ മാത്രമേ ഞങ്ങൾ നിങ്ങളുടെ വിവരങ്ങൾ ഉപയോഗിക്കൂ.',
     footerTagline: 'നിങ്ങളുടെ അവകാശങ്ങൾ. ഞങ്ങളുടെ പിന്തുണ.',
+    askAboutSchemeTemplate: '{scheme} എന്നതിനെക്കുറിച്ച് പറയൂ, ഞാൻ യോഗ്യനാണോ എന്ന് പരിശോധിക്കൂ.',
+    continueEligibilityTemplate: '{scheme} യ്‌ക്കുള്ള എന്റെ യോഗ്യത പരിശോധിക്കുന്നത് തുടരൂ.',
   },
   'mr-IN': {
     tagline: 'तुमचे हक्क. आमचा पाठिंबा.',
@@ -568,8 +606,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'अधिक माहिती आवश्यक आहे',
     dataSecureTitle: 'तुमचा डेटा सुरक्षित आहे',
     needHelpTitle: 'मदत हवी आहे?',
-    helplineLabel: 'हेल्पलाइन',
-    helplineSubtitle: '११२ (एकात्मिक आपत्कालीन हेल्पलाइन)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'ऑनलाइन तक्रार दाखल करा',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'सर्व सरकारी योजना पहा',
     whatsappLabel: 'व्हॉट्सअॅप',
     whatsappSubtitle: 'लवकरच येत आहे',
     userGuideLabel: 'वापरकर्ता मार्गदर्शक',
@@ -592,6 +632,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: 'तुमची उत्तरे जतन केली जातात, जेणेकरून तुम्ही परत आल्यावर संभाषण सुरू ठेवू शकता.',
     privacyNote: 'आम्ही तुमची माहिती केवळ तुमच्या विनंतीसाठी मदत करण्यासाठी वापरतो.',
     footerTagline: 'तुमचे हक्क. आमचा पाठिंबा.',
+    askAboutSchemeTemplate: 'मला {scheme} बद्दल सांगा आणि मी पात्र आहे का ते तपासा.',
+    continueEligibilityTemplate: '{scheme} साठी माझी पात्रता तपासणे सुरू ठेवा.',
   },
   'pa-IN': {
     tagline: 'ਤੁਹਾਡੇ ਅਧਿਕਾਰ। ਸਾਡਾ ਸਹਿਯੋਗ।',
@@ -627,8 +669,10 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     statusMissing: 'ਹੋਰ ਜਾਣਕਾਰੀ ਲੋੜੀਂਦੀ ਹੈ',
     dataSecureTitle: 'ਤੁਹਾਡਾ ਡਾਟਾ ਸੁਰੱਖਿਅਤ ਹੈ',
     needHelpTitle: 'ਮਦਦ ਚਾਹੀਦੀ ਹੈ?',
-    helplineLabel: 'ਹੈਲਪਲਾਈਨ',
-    helplineSubtitle: '੧੧੨ (ਏਕੀਕ੍ਰਿਤ ਐਮਰਜੈਂਸੀ ਹੈਲਪਲਾਈਨ)',
+    cpgramsLabel: 'CPGRAMS',
+    cpgramsSubtitle: 'ਆਨਲਾਈਨ ਸ਼ਿਕਾਇਤ ਦਰਜ ਕਰੋ',
+    mySchemeLabel: 'MyScheme',
+    mySchemeSubtitle: 'ਸਾਰੀਆਂ ਸਰਕਾਰੀ ਯੋਜਨਾਵਾਂ ਦੇਖੋ',
     whatsappLabel: 'ਵਟਸਐਪ',
     whatsappSubtitle: 'ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ',
     userGuideLabel: 'ਵਰਤੋਂਕਾਰ ਗਾਈਡ',
@@ -651,6 +695,8 @@ export const STRINGS: Record<LanguageCode, Strings> = {
     step4Body: "ਤੁਹਾਡੇ ਜਵਾਬ ਸੁਰੱਖਿਅਤ ਰਹਿੰਦੇ ਹਨ, ਤਾਂ ਜੋ ਤੁਸੀਂ ਵਾਪਸ ਆਉਣ 'ਤੇ ਗੱਲਬਾਤ ਜਾਰੀ ਰੱਖ ਸਕੋ।",
     privacyNote: 'ਅਸੀਂ ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ ਸਿਰਫ਼ ਤੁਹਾਡੀ ਬੇਨਤੀ ਵਿੱਚ ਮਦਦ ਕਰਨ ਲਈ ਵਰਤਦੇ ਹਾਂ।',
     footerTagline: 'ਤੁਹਾਡੇ ਅਧਿਕਾਰ। ਸਾਡਾ ਸਹਿਯੋਗ।',
+    askAboutSchemeTemplate: 'ਮੈਨੂੰ {scheme} ਬਾਰੇ ਦੱਸੋ ਅਤੇ ਜਾਂਚ ਕਰੋ ਕਿ ਮੈਂ ਯੋਗ ਹਾਂ ਜਾਂ ਨਹੀਂ।',
+    continueEligibilityTemplate: '{scheme} ਲਈ ਮੇਰੀ ਯੋਗਤਾ ਦੀ ਜਾਂਚ ਕਰਨਾ ਜਾਰੀ ਰੱਖੋ।',
   },
 }
 

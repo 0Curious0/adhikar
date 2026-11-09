@@ -2,6 +2,7 @@ import { Mic } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { postVoice } from '../api'
 import { useStrings, type Strings } from '../i18n'
+import { blobToWav } from '../lib/wav'
 import type { LanguageCode } from '../types'
 
 type Status = 'idle' | 'recording' | 'thinking' | 'playing' | 'no_reply' | 'error'
@@ -55,7 +56,11 @@ export function VoiceMode(props: { userId: string; languageCode: LanguageCode; o
 
   async function sendClip(audio: Blob) {
     try {
-      const reply = await postVoice({ userId: props.userId, languageCode: props.languageCode, audio })
+      // MediaRecorder's output codec (webm on Chrome/Edge, ogg on Firefox, mp4 on Safari) isn't
+      // reliably accepted by Prisma's REST endpoint — webm specifically isn't on its supported
+      // list at all. Decoding back to PCM and rewrapping as WAV sidesteps codec choice entirely.
+      const wav = await blobToWav(audio)
+      const reply = await postVoice({ userId: props.userId, languageCode: props.languageCode, audio: wav })
       props.onCaseChanged()
       if (reply === null) {
         setStatus('no_reply')

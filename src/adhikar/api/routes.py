@@ -14,6 +14,27 @@ from .tts_stream import DEFAULT_VOICE, relay_tts_stream
 
 router = APIRouter()
 
+# A static, hand-maintained fallback (mirrors frontend/i18n.ts's own hand-maintained UI-string
+# table) rather than an NLG-generated apology: an unexpected failure anywhere in a turn — STT,
+# NLU, the evaluator, profile storage — could just as easily be an NLG failure itself, so the
+# fallback can't risk depending on another model call succeeding.
+_FALLBACK_REPLIES: dict[str, str] = {
+    "en-IN": "Sorry, something went wrong. Please try again.",
+    "hi-IN": "क्षमा करें, कुछ गड़बड़ी हुई। कृपया फिर से कोशिश करें।",
+    "bn-IN": "দুঃখিত, কিছু ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "gu-IN": "માફ કરશો, કંઈક ખોટું થયું. કૃપા કરી ફરી પ્રયાસ કરો.",
+    "kn-IN": "ಕ್ಷಮಿಸಿ, ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "ml-IN": "ക്ഷമിക്കണം, എന്തോ തകരാറ് സംഭവിച്ചു. വീണ്ടും ശ്രമിക്കുക.",
+    "mr-IN": "माफ करा, काहीतरी चुकले. कृपया पुन्हा प्रयत्न करा.",
+    "pa-IN": "ਮਾਫ਼ ਕਰਨਾ, ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+    "ta-IN": "மன்னிக்கவும், ஏதோ தவறு ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.",
+    "te-IN": "క్షమించండి, ఏదో తప్పు జరిగింది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+}
+
+
+def _fallback_reply(language_code: str) -> str:
+    return _FALLBACK_REPLIES.get(language_code, _FALLBACK_REPLIES["en-IN"])
+
 
 class ChatRequest(BaseModel):
     user_id: str
@@ -80,9 +101,15 @@ def get_tts_provider_ws(websocket: WebSocket) -> TTSProvider:
 
 @router.post("/chat")
 async def chat(body: ChatRequest, orchestrator: Orchestrator = Depends(get_orchestrator)) -> ChatResponse:
-    reply = await orchestrator.handle_turn(
-        user_id=body.user_id, transcript=body.transcript, language_code=body.language_code
-    )
+    try:
+        reply = await orchestrator.handle_turn(
+            user_id=body.user_id, transcript=body.transcript, language_code=body.language_code
+        )
+    except Exception:
+        # An unhandled provider failure (STT/NLU/NLG/schemes/profile) must not surface as a raw
+        # 500 — the user just sees a generic, misleading "check your connection" error with no way
+        # to recover in-conversation. A friendly, same-language reply keeps the turn usable.
+        reply = _fallback_reply(body.language_code)
     return ChatResponse(reply=reply)
 
 
@@ -164,17 +191,27 @@ async def voice(
     stt_provider: STTProvider = Depends(get_stt_provider),
     tts_provider: TTSProvider = Depends(get_tts_provider),
 ) -> Response:
-    transcription = await stt_provider.transcribe(
-        await audio.read(), language_code=language_code, filename=audio.filename or "audio.wav"
-    )
+    try:
+        transcription = await stt_provider.transcribe(
+            await audio.read(), language_code=language_code, filename=audio.filename or "audio.wav"
+        )
+        reply = await orchestrator.handle_turn(
+            user_id=user_id, transcript=transcription.transcript, language_code=language_code
+        )
+    except Exception:
+        # Same reasoning as /chat's catch — STT, the orchestrator, or anything inside it can fail
+        # unexpectedly, and Voice mode has no transcript on screen to fall back to showing, so the
+        # reply must still be spoken rather than the request just 500ing.
+        reply = _fallback_reply(language_code)
 
-    reply = await orchestrator.handle_turn(
-        user_id=user_id, transcript=transcription.transcript, language_code=language_code
-    )
     if reply is None:
         return Response(status_code=204)
 
-    audio_reply = await tts_provider.synthesize(reply, language_code=language_code, voice=DEFAULT_VOICE)
+    try:
+        audio_reply = await tts_provider.synthesize(reply, language_code=language_code, voice=DEFAULT_VOICE)
+    except Exception:
+        # Can't speak even the fallback text — nothing left to send back.
+        return Response(status_code=204)
     return Response(content=audio_reply, media_type="audio/wav")
 
 

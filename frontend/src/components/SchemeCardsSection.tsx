@@ -19,6 +19,7 @@ export function SchemeCardsSection(props: {
   languageCode: LanguageCode
   schemes: SchemeSummary[]
   onSelectScheme: (scheme: SchemeSummary) => void
+  onViewAll: () => void
 }) {
   const strings = useStrings(props.languageCode)
   const byId = new Map(props.schemes.map((scheme) => [scheme.scheme_id, scheme]))
@@ -37,10 +38,10 @@ export function SchemeCardsSection(props: {
             <p className="schemes-section__subtitle">{strings.schemesSectionSubtitle}</p>
           </div>
         </div>
-        <a href="#schemes" className="schemes-section__view-all">
+        <button type="button" className="schemes-section__view-all" onClick={props.onViewAll}>
           {strings.viewAllSchemes}
           <ArrowRight size={14} aria-hidden="true" />
-        </a>
+        </button>
       </div>
 
       <div className="scheme-cards">

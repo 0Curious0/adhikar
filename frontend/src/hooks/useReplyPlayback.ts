@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ttsStreamUrl } from '../api'
 import type { LanguageCode } from '../types'
 
@@ -11,6 +11,7 @@ export function useReplyPlayback(languageCode: LanguageCode) {
   const wsRef = useRef<WebSocket | null>(null)
   const playCtxRef = useRef<AudioContext | null>(null)
   const nextPlayTimeRef = useRef(0)
+  const [error, setError] = useState<string | null>(null)
 
   const closeSocket = useCallback(() => {
     wsRef.current?.close()
@@ -53,18 +54,32 @@ export function useReplyPlayback(languageCode: LanguageCode) {
       }
       ws.onerror = () => reject(new Error('tts stream connection failed'))
       ws.onmessage = (event) => {
-        if (event.data instanceof ArrayBuffer) playChunk(event.data)
+        if (event.data instanceof ArrayBuffer) {
+          playChunk(event.data)
+          return
+        }
+        // A non-binary message is the relay's explicit error signal (adhikar.api.tts_stream) —
+        // Timbre failed mid-synthesis. Without this, a server-side TTS error is silent: the
+        // browser sent text and just never receives any audio back, indistinguishable from
+        // "still synthesizing."
+        try {
+          const message = JSON.parse(event.data)
+          if (message.type === 'error') setError("Couldn't play the voice reply — try again.")
+        } catch {
+          // Unexpected text frame shape — nothing useful to do with it.
+        }
       }
     })
   }, [languageCode, playChunk])
 
   const speak = useCallback(
     async (text: string) => {
+      setError(null)
       const ws = await ensureSocket()
       ws.send(text)
     },
     [ensureSocket],
   )
 
-  return { speak }
+  return { speak, error }
 }

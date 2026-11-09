@@ -10,28 +10,34 @@ from adhikar.tts.models import TTSEventType, TTSStreamEvent
 
 
 class FakeTTSStream:
-    def __init__(self, event_batches: list[list[TTSStreamEvent]]):
-        self._event_batches = event_batches
+    """One per `stream()` call — mirrors a fresh Timbre connection being opened per reply (see
+    adhikar.api.tts_stream), unlike the single-shared-session shape this fake used to have."""
+
+    def __init__(self, events: list[TTSStreamEvent]):
+        self._events = events
         self.sent_texts: list[str] = []
 
     async def send_text(self, text: str) -> None:
         self.sent_texts.append(text)
 
     async def events(self):
-        for batch in self._event_batches:
-            for event in batch:
-                yield event
+        for event in self._events:
+            yield event
 
 
 class FakeTTSProvider:
-    def __init__(self, tts_stream: FakeTTSStream):
-        self._tts_stream = tts_stream
+    def __init__(self, event_batches: list[list[TTSStreamEvent]]):
+        self._remaining_batches = list(event_batches)
+        self.streams: list[FakeTTSStream] = []
         self.stream_calls: list[dict] = []
 
     @asynccontextmanager
     async def stream(self, *, language_code: str, voice: str, speed=1.0, audio_config=None):
         self.stream_calls.append({"language_code": language_code, "voice": voice, "audio_config": audio_config})
-        yield self._tts_stream
+        batch = self._remaining_batches.pop(0) if self._remaining_batches else []
+        tts_stream = FakeTTSStream(batch)
+        self.streams.append(tts_stream)
+        yield tts_stream
 
 
 def _connect(provider: FakeTTSProvider, language_code: str = "hi-IN"):
@@ -48,7 +54,7 @@ def test_relays_audio_chunks_for_one_reply():
             TTSStreamEvent(type=TTSEventType.COMPLETE, raw={}),
         ]
     ]
-    provider = FakeTTSProvider(FakeTTSStream(batches))
+    provider = FakeTTSProvider(batches)
 
     try:
         with _connect(provider) as websocket:
@@ -64,7 +70,7 @@ def test_relays_audio_chunks_for_one_reply():
 
 def test_passes_language_code_and_uses_default_voice():
     batches = [[TTSStreamEvent(type=TTSEventType.COMPLETE, raw={})]]
-    provider = FakeTTSProvider(FakeTTSStream(batches))
+    provider = FakeTTSProvider(batches)
 
     try:
         with _connect(provider, language_code="ta-IN") as websocket:
@@ -81,8 +87,7 @@ def test_passes_language_code_and_uses_default_voice():
 
 def test_forwards_client_text_to_send_text():
     batches = [[TTSStreamEvent(type=TTSEventType.COMPLETE, raw={})]]
-    tts_stream = FakeTTSStream(batches)
-    provider = FakeTTSProvider(tts_stream)
+    provider = FakeTTSProvider(batches)
 
     try:
         with _connect(provider) as websocket:
@@ -92,16 +97,18 @@ def test_forwards_client_text_to_send_text():
     finally:
         app.dependency_overrides.pop(get_tts_provider_ws, None)
 
-    assert tts_stream.sent_texts == ["aap patr hain"]
+    assert provider.streams[0].sent_texts == ["aap patr hain"]
 
 
-def test_handles_multiple_replies_on_one_connection():
+def test_handles_multiple_replies_opens_a_fresh_upstream_connection_each_time():
+    # The regression this guards against: Timbre's realtime endpoint does not reliably handle
+    # multiple sequential requests over one connection (see adhikar.api.tts_stream's docstring) —
+    # every reply must open its own `tts_provider.stream()`, not share one across the session.
     batches = [
         [TTSStreamEvent(type=TTSEventType.AUDIO, raw={}, audio=b"reply-one"), TTSStreamEvent(type=TTSEventType.COMPLETE, raw={})],
         [TTSStreamEvent(type=TTSEventType.AUDIO, raw={}, audio=b"reply-two"), TTSStreamEvent(type=TTSEventType.COMPLETE, raw={})],
     ]
-    tts_stream = FakeTTSStream(batches)
-    provider = FakeTTSProvider(tts_stream)
+    provider = FakeTTSProvider(batches)
 
     try:
         with _connect(provider) as websocket:
@@ -114,7 +121,9 @@ def test_handles_multiple_replies_on_one_connection():
 
     assert first == b"reply-one"
     assert second == b"reply-two"
-    assert tts_stream.sent_texts == ["first reply", "second reply"]
+    assert len(provider.stream_calls) == 2
+    assert provider.streams[0].sent_texts == ["first reply"]
+    assert provider.streams[1].sent_texts == ["second reply"]
 
 
 def test_stops_relaying_on_error_event_without_hanging():
@@ -124,24 +133,26 @@ def test_stops_relaying_on_error_event_without_hanging():
             TTSStreamEvent(type=TTSEventType.ERROR, raw={}, message="synthesis failed"),
         ]
     ]
-    provider = FakeTTSProvider(FakeTTSStream(batches))
+    provider = FakeTTSProvider(batches)
 
     try:
         with _connect(provider) as websocket:
             websocket.send_text("hello")
             partial = websocket.receive_bytes()
+            # Without this, the client sent text and gets nothing back at all on failure —
+            # indistinguishable from "still synthesizing." See adhikar.api.tts_stream.
+            error_message = websocket.receive_json()
             websocket.close()
             time.sleep(0.1)
     finally:
         app.dependency_overrides.pop(get_tts_provider_ws, None)
 
     assert partial == b"partial"
+    assert error_message == {"type": "error", "message": "synthesis failed"}
 
 
 def test_client_disconnect_tears_down_cleanly_mid_session():
-    batches = [[TTSStreamEvent(type=TTSEventType.COMPLETE, raw={})]]
-    tts_stream = FakeTTSStream(batches)
-    provider = FakeTTSProvider(tts_stream)
+    provider = FakeTTSProvider([[TTSStreamEvent(type=TTSEventType.COMPLETE, raw={})]])
 
     try:
         with _connect(provider) as websocket:
@@ -150,4 +161,4 @@ def test_client_disconnect_tears_down_cleanly_mid_session():
     finally:
         app.dependency_overrides.pop(get_tts_provider_ws, None)
 
-    assert tts_stream.sent_texts == []
+    assert provider.stream_calls == []

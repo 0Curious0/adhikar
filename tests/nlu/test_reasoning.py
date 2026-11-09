@@ -68,6 +68,17 @@ async def test_extract_sends_schema_with_no_required_fields():
 
 
 @respx.mock
+async def test_extract_uses_zero_temperature_for_deterministic_extraction():
+    route = respx.post(URL).mock(return_value=_response(json.dumps({})))
+
+    provider = Sarvam105BReasoningProvider(api_key="test-key")
+    await provider.extract("hello", {"age_years": FieldSpec(field="age_years", type=FieldType.NUMBER)})
+
+    body = json.loads(route.calls.last.request.content)
+    assert body["temperature"] == 0
+
+
+@respx.mock
 async def test_extract_sends_field_description_when_set():
     route = respx.post(URL).mock(return_value=_response(json.dumps({})))
 
@@ -102,6 +113,16 @@ async def test_extract_raises_nlu_request_error_on_api_error():
 
     assert exc_info.value.status_code == 400
     assert exc_info.value.request_id == "req_1"
+
+
+@respx.mock
+async def test_extract_returns_empty_dict_when_model_returns_no_content():
+    respx.post(URL).mock(return_value=_response(None))
+
+    provider = Sarvam105BReasoningProvider(api_key="test-key")
+    facts = await provider.extract("no, nothing like that", {"age_years": FieldSpec(field="age_years", type=FieldType.NUMBER)})
+
+    assert facts == {}
 
 
 @respx.mock

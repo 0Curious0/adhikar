@@ -29,6 +29,13 @@ a {
   padding: 14px 0;
 }
 
+.header__brand--link {
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
 .header__emblem {
   width: 42px;
   height: 42px;
@@ -69,6 +76,15 @@ a {
   position: relative;
   padding: 6px 0;
   transition: color 200ms ease;
+}
+
+/* "Schemes"/"Cases" render as <button> (SPA navigation) rather than <a> (anchor) — reset native
+   button chrome so they're visually identical to the anchor-based nav items beside them. */
+button.header__nav-link {
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
 }
 
 .header__nav-link::after {
@@ -220,6 +236,12 @@ a {
   width: 100%;
   margin: 0 auto;
   padding: 32px 65px;
+}
+
+/* Full-width single column, no 360px sidebar — AllSchemesPage/ActivityPage have no sidebar
+   content, so the usual 1fr-360px split would just leave an empty gap on the right. */
+.app__body--full {
+  grid-template-columns: 1fr;
 }
 
 @media (max-width: 1199px) {
@@ -419,6 +441,26 @@ a {
   }
 }
 
+/* ===== Back link (Voice / Chat pages) ===== */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.back-link:hover {
+  color: var(--color-primary-button);
+}
+
 /* ===== Interaction panel (Voice / Chat mode) ===== */
 
 .interaction-panel {
@@ -490,6 +532,22 @@ a {
   padding: 12px;
   font: inherit;
   font-size: 16px;
+}
+
+.chat-mode__status {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  animation: thinking-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes thinking-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .chat-mode__error {
@@ -583,10 +641,14 @@ a {
   display: flex;
   align-items: center;
   gap: 6px;
+  background: none;
+  border: none;
+  font: inherit;
   color: var(--color-primary-button);
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .scheme-cards {
@@ -989,6 +1051,12 @@ a.support-row:hover {
   color: var(--color-success);
 }
 
+.support-row__icon-image {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
 .support-row__text {
   display: flex;
   flex-direction: column;
@@ -1004,6 +1072,11 @@ a.support-row:hover {
 .support-row__subtitle {
   font-size: 12px;
   color: var(--color-text-muted);
+}
+
+.support-row__subtitle--coming-soon {
+  color: var(--color-success);
+  font-weight: 600;
 }
 
 /* ===== Footer ===== */

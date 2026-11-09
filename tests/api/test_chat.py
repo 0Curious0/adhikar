@@ -14,6 +14,11 @@ class FakeOrchestrator:
         return self._reply
 
 
+class RaisingOrchestrator:
+    async def handle_turn(self, *, user_id: str, transcript: str, language_code: str) -> str | None:
+        raise RuntimeError("boom")
+
+
 async def _post_chat(orchestrator: FakeOrchestrator, body: dict[str, str]):
     app.dependency_overrides[get_orchestrator] = lambda: orchestrator
     try:
@@ -50,6 +55,22 @@ async def test_chat_returns_null_reply_when_orchestrator_has_nothing_to_say():
 
     assert response.status_code == 200
     assert response.json() == {"reply": None}
+
+
+async def test_chat_returns_fallback_reply_when_orchestrator_raises():
+    response = await _post_chat(
+        RaisingOrchestrator(), {"user_id": "u1", "transcript": "no I am not getting any other pension", "language_code": "hi-IN"}
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"reply": "क्षमा करें, कुछ गड़बड़ी हुई। कृपया फिर से कोशिश करें।"}
+
+
+async def test_chat_returns_english_fallback_for_unknown_language_code():
+    response = await _post_chat(RaisingOrchestrator(), {"user_id": "u1", "transcript": "hi", "language_code": "xx-XX"})
+
+    assert response.status_code == 200
+    assert response.json() == {"reply": "Sorry, something went wrong. Please try again."}
 
 
 async def test_chat_rejects_missing_fields():

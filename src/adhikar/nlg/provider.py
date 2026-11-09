@@ -35,7 +35,13 @@ class Sarvam105BConversationsProvider(ConversationProvider):
             f"{system_prompt}\n\n"
             f"Respond only in {_LANGUAGE_NAMES[language_code]}, in a natural, colloquial, "
             "spoken style suitable for a voice assistant talking to a low-literacy user. Do "
-            "not mix in other languages or scripts, and do not add commentary outside the reply."
+            "not mix in other languages or scripts, and do not add commentary outside the reply. "
+            "Use ONLY the specific details given to you above and in the message below — never "
+            "invent a number, amount, state/place name, date, or eligibility condition that "
+            "isn't explicitly stated there, even if it sounds plausible for this kind of scheme. "
+            "If you need to mention a field by name but weren't given its value or a concrete "
+            "number for it, phrase it generically (ask about it, or state that it's required) "
+            "rather than guessing a specific figure or detail to fill the gap."
         )
 
         try:

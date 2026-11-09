@@ -19,9 +19,16 @@ class DecisionProvider(ABC):
 
 class ReasoningProvider(ABC):
     @abstractmethod
-    async def extract(self, text: str, field_specs: dict[str, FieldSpec]) -> dict[str, Any]:
+    async def extract(
+        self, text: str, field_specs: dict[str, FieldSpec], *, context: str | None = None
+    ) -> dict[str, Any]:
         """Extract whichever of `field_specs` are mentioned in `text`.
 
         Returns only the fields actually found — an omitted field means "not mentioned", not
         "false"/"zero"/"unknown value".
+
+        `context` (optional): which fields the assistant's previous reply actually asked about,
+        if any. `text` alone often can't be attributed to a field on its own — a short or vague
+        reply ("yes", "I don't have one") says nothing about *which* field it answers without
+        knowing what was just asked.
         """

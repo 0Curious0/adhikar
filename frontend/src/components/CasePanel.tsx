@@ -6,11 +6,15 @@ function formatTimestamp(iso: string): string {
   return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 }
 
+const COMPACT_LIMIT = 3
+
 export function CasePanel(props: {
   languageCode: LanguageCode
   activity: ActivityItem[]
   loading: boolean
   onSelectActivity: (item: ActivityItem) => void
+  /** Voice/Chat pages: recent activity only, no data-secure note — see ConversationPage in App.tsx. */
+  compact?: boolean
 }) {
   const strings = useStrings(props.languageCode)
 
@@ -19,6 +23,8 @@ export function CasePanel(props: {
     not_eligible: strings.statusNotEligible,
     missing_fields: strings.statusMissing,
   }
+
+  const visibleActivity = props.compact ? props.activity.slice(0, COMPACT_LIMIT) : props.activity
 
   return (
     <section id="cases" className="panel">
@@ -29,11 +35,11 @@ export function CasePanel(props: {
 
       {props.loading ? (
         <p className="panel__empty">…</p>
-      ) : props.activity.length === 0 ? (
+      ) : visibleActivity.length === 0 ? (
         <p className="panel__empty">{strings.noCaseYet}</p>
       ) : (
         <ul className="activity-list">
-          {props.activity.map((item, index) => (
+          {visibleActivity.map((item, index) => (
             <li key={`${item.scheme_id}-${item.created_at}-${index}`} className="activity-list__item">
               <button type="button" className="activity-list__row" onClick={() => props.onSelectActivity(item)}>
                 <span
@@ -53,13 +59,15 @@ export function CasePanel(props: {
         </ul>
       )}
 
-      <div className="data-secure">
-        <ShieldCheck size={18} className="data-secure__icon" aria-hidden="true" />
-        <div>
-          <p className="data-secure__title">{strings.dataSecureTitle}</p>
-          <p className="data-secure__body">{strings.privacyNote}</p>
+      {!props.compact && (
+        <div className="data-secure">
+          <ShieldCheck size={18} className="data-secure__icon" aria-hidden="true" />
+          <div>
+            <p className="data-secure__title">{strings.dataSecureTitle}</p>
+            <p className="data-secure__body">{strings.privacyNote}</p>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   )
 }
