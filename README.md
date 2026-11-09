@@ -43,19 +43,31 @@ contract itself (verification handshake, media fetch, sending replies), not the 
 | NLU (`adhikar.nlu`) — intent/scheme decisions (Prism), entity extraction (105B) | Done, tested |
 | NLG (`adhikar.nlg`) — spoken-reply generation (105B Conversations) | Done, tested |
 | Dialogue management (`adhikar.dialogue`) — user profile store + turn orchestration (wiring NLU/evaluator/NLG together) | Done, tested |
-| FastAPI backend (`adhikar.api`) — `POST /chat`, `POST /voice` (Voice mode), `WS /stt/stream` + `WS /tts/stream` (Chat mode) | Done, tested |
-| Frontend | Not started |
+| FastAPI backend (`adhikar.api`) — `POST /chat`, `POST /voice` (Voice mode), `WS /stt/stream` + `WS /tts/stream` (Chat mode), plus read-only `GET /schemes`, `GET /profile/{user_id}`, `GET /activity/{user_id}` | Done, tested |
+| Frontend (`frontend/`) — React + TypeScript + Vite; homepage, Voice mode, Chat mode, all-schemes page, activity-history page; 10-language UI chrome | Done |
 | WhatsApp bot integration | Deferred past MVP (upcoming feature) |
 
 See `CLAUDE.md` for architecture details and decisions behind the above.
 
 ## Running this project
 
+Backend:
+
 ```bash
 uv sync                                        # install dependencies
 echo "GNANI_API_KEY=..." > .env                # see adhikar.config.Settings for all env vars
 echo "SARVAM_API_KEY=..." >> .env              # needed for adhikar.nlu / adhikar.nlg
 uv run pytest                                  # run the test suite
+uv run uvicorn adhikar.api.app:app --reload    # run the backend (localhost:8000)
 uv run python scripts/realtime_stt_demo.py     # manual mic -> live transcript check
 uv run python scripts/tts_demo.py              # manual text -> synthesized speech check
+```
+
+Frontend (needs the backend running first):
+
+```bash
+cd frontend
+npm install
+npm run dev                                    # dev server on localhost:5173 — the backend's
+                                                # CORS config only allows this exact origin
 ```
