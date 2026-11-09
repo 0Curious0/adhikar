@@ -47,12 +47,14 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Adhikar", lifespan=lifespan)
-# Vite's dev server (and `vite preview`) run on a different origin than uvicorn, so the browser
-# enforces CORS on every /chat, /voice, /stt/stream, /tts/stream call. Hardcoded, not a Settings
-# field: these are fixed local dev ports, not something that varies per deployment yet.
+# The frontend always runs on a different origin than this backend — Vite's dev server locally,
+# a separate Vercel domain in production — so the browser enforces CORS on every /chat, /voice,
+# /stt/stream, /tts/stream call. `allowed_origins` defaults to Vite's local dev ports; set
+# ALLOWED_ORIGINS in the deployed environment to the real frontend domain(s) instead of editing
+# this file per deployment.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=get_settings().allowed_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
