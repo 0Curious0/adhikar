@@ -13,10 +13,21 @@ schemes/languages are roadmap, not built — a narrow, polished demo beats a bro
 VB-G RAM G (Viksit Bharat - Guarantee for Rozgar and Ajeevika Mission (Gramin) Act, 2025) supersedes
 MGNREGA; its actual provisions aren't verified yet, see `src/adhikar/schemes/data/vb_g_ram_g.json`.
 
-**Two voice input channels, two STT paths:**
-- Web — Prisma's realtime WebSocket streaming (`stt/v3/stream`)
-- WhatsApp — Prisma's single-file REST endpoint (`stt/v3`); voice notes are short enough that no
-  async job queue is needed
+**Web is the only MVP channel**, with two interaction modes:
+- **Voice mode** — REST, push-to-talk: one spoken turn is recorded as a single clip (the user
+  explicitly starts/stops; never silence-detection, which would cut off mid-thought pauses), then
+  sent through transcribe -> orchestrator -> synthesize in one request. The default, since it
+  needs no reading/typing — this is the accessible path for the low-literacy users the app targets.
+- **Chat mode** — realtime streaming, editable text: dictation streams live into an editable input
+  box (so the user can correct it) via Prisma's realtime WebSocket; sending is a separate explicit
+  action; the reply is voiced back via Timbre's realtime WebSocket. An opt-in for literate users
+  (or a literate person helping someone use the app), not the default.
+
+WhatsApp integration is **deferred past MVP** — a planned upcoming feature, not forgotten scope.
+When it's built, it reuses the same REST transcribe -> orchestrator -> synthesize pipeline Voice
+mode already uses (Prisma's single-file `stt/v3` endpoint; voice notes are short enough that no
+async job queue is needed) — the new work at that point is the WhatsApp Business API webhook
+contract itself (verification handshake, media fetch, sending replies), not the voice pipeline.
 
 **Stack:** Python + FastAPI backend, React + TypeScript frontend.
 
@@ -29,11 +40,10 @@ MGNREGA; its actual provisions aren't verified yet, see `src/adhikar/schemes/dat
 | Scheme knowledge base + evaluator (`adhikar.schemes`) — 5 schemes, deterministic eligibility | Done, tested |
 | NLU (`adhikar.nlu`) — intent/scheme decisions (Prism), entity extraction (105B) | Done, tested |
 | NLG (`adhikar.nlg`) — spoken-reply generation (105B Conversations) | Done, tested |
-| Dialogue management (`adhikar.dialogue`) — user profile store | Done, tested |
-| Dialogue management — turn orchestration (wiring NLU/evaluator/NLG together) | Not started |
-| FastAPI backend | Not started |
+| Dialogue management (`adhikar.dialogue`) — user profile store + turn orchestration (wiring NLU/evaluator/NLG together) | Done, tested |
+| FastAPI backend (`adhikar.api`) — `POST /chat`, `POST /voice` (Voice mode), `WS /stt/stream` + `WS /tts/stream` (Chat mode) | Done, tested |
 | Frontend | Not started |
-| WhatsApp bot integration | Not started |
+| WhatsApp bot integration | Deferred past MVP (upcoming feature) |
 
 See `CLAUDE.md` for architecture details and decisions behind the above.
 
