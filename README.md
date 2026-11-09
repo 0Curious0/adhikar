@@ -69,5 +69,7 @@ Frontend (needs the backend running first):
 cd frontend
 npm install
 npm run dev                                    # dev server on localhost:5173 — the backend's
-                                                # CORS config only allows this exact origin
+                                                # CORS config allows this origin by default
+                                                # (override with ALLOWED_ORIGINS for a deployed
+                                                # frontend domain, e.g. on Vercel)
 ```
