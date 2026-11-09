@@ -1,0 +1,93 @@
+:root {
+  /* Brand */
+  --color-primary: #941c1d;
+  --color-primary-button: #a51f22;
+  --color-primary-hover: #7f171a;
+
+  /* Text */
+  --color-text: #172337;
+  --color-text-secondary: #52627a;
+  --color-text-muted: #8490a0;
+
+  /* Surfaces */
+  --color-bg: #fafafa;
+  --color-card: #ffffff;
+  --color-section-alt: #f0f3f6;
+  --color-section-alt-border: #e5e9ed;
+  --color-pink: #f8ecec;
+  --color-border: #e1e5ea;
+
+  /* Status */
+  --color-success: #269e78;
+  --color-warning: #f39a19;
+  --color-error: #b3262d;
+
+  --shadow-card: 0 1px 2px rgba(23, 35, 55, 0.04);
+  --shadow-hover: 0 6px 16px rgba(23, 35, 55, 0.08);
+
+  /* Indic scripts need their own font listed first for their own text runs so the browser
+     picks a script that actually renders Devanagari/Tamil/Telugu glyphs — Inter has none. */
+  --font-sans:
+    'Inter', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Bengali',
+    'Noto Sans Gujarati', 'Noto Sans Kannada', 'Noto Sans Malayalam', 'Noto Sans Gurmukhi',
+    system-ui, sans-serif;
+
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+
+  font: 400 16px/150% var(--font-sans);
+  color-scheme: light;
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-button);
+  outline-offset: 2px;
+}
