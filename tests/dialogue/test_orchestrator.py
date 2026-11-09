@@ -1,5 +1,6 @@
 from typing import Any
 
+from adhikar.dialogue.activity import SQLiteActivityLogStore
 from adhikar.dialogue.orchestrator import Orchestrator
 from adhikar.dialogue.profile import SQLiteProfileStore, UserProfile
 from adhikar.nlg.base import ConversationProvider
@@ -115,6 +116,7 @@ def _orchestrator(
     conversation = FakeConversationProvider(reply_text)
     orchestrator = Orchestrator(
         profile_store=store,
+        activity_log=SQLiteActivityLogStore(tmp_path / "activity.db"),
         decision_provider=FakeDecisionProvider(decision_answers),
         reasoning_provider=FakeReasoningProvider(reasoning_result or {}),
         conversation_provider=conversation,
@@ -347,3 +349,61 @@ async def test_grievance_without_grievance_info_apologizes(tmp_path):
     await orchestrator.handle_turn(user_id="u1", transcript="my payment never came", language_code="en-IN")
 
     assert "Apologize" in conversation.calls[0]["system_prompt"]
+
+
+async def test_scheme_query_pinning_a_new_scheme_logs_activity(tmp_path):
+    orchestrator, _, _ = _orchestrator(
+        tmp_path,
+        decision_answers={
+            "intent": ChoiceAnswer(choice="scheme_query", confidence=0.9, probabilities={}),
+            "scheme": ChoiceAnswer(choice="scheme_a", confidence=0.9, probabilities={}),
+        },
+    )
+
+    await orchestrator.handle_turn(user_id="u1", transcript="am I eligible for scheme a?", language_code="en-IN")
+
+    entries = orchestrator._activity_log.recent("u1")
+    assert len(entries) == 1
+    assert entries[0].scheme_id == "scheme_a"
+    assert entries[0].eligibility_status == "missing_fields"
+
+
+async def test_scheme_query_reusing_pinned_scheme_does_not_log_again(tmp_path):
+    orchestrator, store, _ = _orchestrator(
+        tmp_path, decision_answers={"intent": ChoiceAnswer(choice="scheme_query", confidence=0.9, probabilities={})}
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_a", facts={"age_years": 20}))
+
+    await orchestrator.handle_turn(user_id="u1", transcript="am I eligible?", language_code="en-IN")
+    await orchestrator.handle_turn(user_id="u1", transcript="am I eligible?", language_code="en-IN")
+
+    assert orchestrator._activity_log.recent("u1") == []
+
+
+async def test_update_info_switching_scheme_logs_activity_for_new_scheme_only(tmp_path):
+    orchestrator, store, _ = _orchestrator(
+        tmp_path,
+        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
+        reasoning_result={"requested_scheme": "scheme_b"},
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_a", facts={"age_years": 20}))
+
+    await orchestrator.handle_turn(user_id="u1", transcript="actually ask about scheme b", language_code="en-IN")
+
+    entries = orchestrator._activity_log.recent("u1")
+    assert len(entries) == 1
+    assert entries[0].scheme_id == "scheme_b"
+    assert entries[0].eligibility_status == "missing_fields"
+
+
+async def test_update_info_without_scheme_switch_does_not_log_activity(tmp_path):
+    orchestrator, store, _ = _orchestrator(
+        tmp_path,
+        decision_answers={"intent": ChoiceAnswer(choice="update_info", confidence=0.9, probabilities={})},
+        reasoning_result={"age_years": 45},
+    )
+    store.save(UserProfile(user_id="u1", pinned_scheme_id="scheme_a"))
+
+    await orchestrator.handle_turn(user_id="u1", transcript="I'm 45", language_code="en-IN")
+
+    assert orchestrator._activity_log.recent("u1") == []

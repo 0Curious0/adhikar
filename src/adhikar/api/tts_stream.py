@@ -6,7 +6,7 @@ from starlette.websockets import WebSocketDisconnected
 from ..tts import AudioConfig, TTSEventType, TTSProvider
 
 # Timbre v2.5 voices aren't language-scoped (unlike v3.0's), so one hardcoded voice covers all
-# 4 MVP languages — not a per-call knob, mirrors TimbreTTSProvider.MODEL being pinned.
+# 10 MVP languages — not a per-call knob, mirrors TimbreTTSProvider.MODEL being pinned.
 DEFAULT_VOICE = "Nalini"
 
 

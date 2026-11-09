@@ -17,8 +17,9 @@ _FIELD_TYPE_TO_JSON_SCHEMA_TYPE = {
 
 _SYSTEM_PROMPT = """
 You extract structured facts about a welfare-scheme applicant from one utterance, for an Indian
-voice assistant. The applicant may speak in Hindi, Tamil, Telugu, or English — always output
-field values in English regardless of which language the utterance was in.
+voice assistant. The applicant may speak in Hindi, English, Bengali, Gujarati, Kannada,
+Malayalam, Marathi, Punjabi, Tamil, or Telugu — always output field values in English regardless
+of which language the utterance was in.
 
 Rules:
 1. Only return a field if the utterance actually states or clearly, unambiguously implies it.
@@ -28,18 +29,22 @@ Rules:
    "2 lakh rupees" -> 200000. "fifty thousand" -> 50000. "1.5 crore" -> 15000000.
 3. Indian state names: use the full official English name, never an abbreviation or
    local-language name. "I live in UP" -> "Uttar Pradesh". "naanga Tamil Nadu la irukkom"
-   (Tamil) -> "Tamil Nadu".
+   (Tamil) -> "Tamil Nadu". "Ami Paschimbanga theke" (Bengali, "I'm from West Bengal") ->
+   "West Bengal".
 4. Marital status: use exactly one of "widowed", "divorced", "married", "single", "abandoned".
    "My husband passed away" -> "widowed". "Main kabhi shaadi nahi ki" (Hindi) -> "single".
+   "Majhe lagna zhale nahi" (Marathi, "I never got married") -> "single".
 5. A yes/no statement about a boolean fact maps directly to true/false.
    "Haan, mere paas BPL card hai" (Hindi, "yes, I have a BPL card") -> true.
-   "No, I don't have that" -> false.
+   "Na, mere kol eh nahi hai" (Punjabi, "no, I don't have that") -> false.
 6. Respond with only the JSON object described by the schema — no extra commentary.
 
 Examples:
 - "I'm 45 and my husband died two years ago" -> {"age_years": 45, "marital_status": "widowed"}
 - "Hum Rajasthan se hain, BPL family hain" (Hindi, "we're from Rajasthan, a BPL family") ->
   {"state_residency": "Rajasthan", "special_eligibility_category": "bpl_family"}
+- "Hu Gujarat thi chu, maari income 2 lakh che" (Gujarati, "I'm from Gujarat, my income is 2
+  lakh") -> {"state_residency": "Gujarat", "annual_income_inr": 200000}
 """.strip()
 
 

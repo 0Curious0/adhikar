@@ -53,6 +53,28 @@ async def test_reply_sends_model_and_messages():
     assert "Tamil" in body["messages"][0]["content"]
 
 
+@respx.mock
+async def test_reply_accepts_each_of_the_10_mvp_languages():
+    route = respx.post(URL).mock(return_value=_response("ok"))
+    provider = Sarvam105BConversationsProvider(api_key="test-key")
+
+    for language_code, language_name in [
+        ("hi-IN", "Hindi"),
+        ("en-IN", "English"),
+        ("bn-IN", "Bengali"),
+        ("gu-IN", "Gujarati"),
+        ("kn-IN", "Kannada"),
+        ("ml-IN", "Malayalam"),
+        ("mr-IN", "Marathi"),
+        ("pa-IN", "Punjabi"),
+        ("ta-IN", "Tamil"),
+        ("te-IN", "Telugu"),
+    ]:
+        await provider.reply(system_prompt="x", user_message="y", language_code=language_code)
+        body = json.loads(route.calls.last.request.content)
+        assert language_name in body["messages"][0]["content"]
+
+
 async def test_reply_raises_nlg_error_on_unsupported_language():
     provider = Sarvam105BConversationsProvider(api_key="test-key")
 

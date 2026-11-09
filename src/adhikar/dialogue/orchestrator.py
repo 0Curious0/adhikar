@@ -10,6 +10,7 @@ from ..nlu import (
     extract_entities,
 )
 from ..schemes import EligibilityResult, EligibilityRule, EligibilityStatus, RuleCheck, RuleState, SchemeDocument, evaluate
+from .activity import ActivityLogStore
 from .profile import ProfileStore, UserProfile, merge_facts, pin_scheme
 
 
@@ -18,12 +19,14 @@ class Orchestrator:
         self,
         *,
         profile_store: ProfileStore,
+        activity_log: ActivityLogStore,
         decision_provider: DecisionProvider,
         reasoning_provider: ReasoningProvider,
         conversation_provider: ConversationProvider,
         schemes: dict[str, SchemeDocument],
     ):
         self._profile_store = profile_store
+        self._activity_log = activity_log
         self._decision_provider = decision_provider
         self._reasoning_provider = reasoning_provider
         self._conversation_provider = conversation_provider
@@ -32,6 +35,15 @@ class Orchestrator:
         self._scheme_descriptions = {
             scheme_id: doc.description.get("en") or doc.name.get("en", scheme_id) for scheme_id, doc in schemes.items()
         }
+
+    def _log_activity_if_changed(self, profile: UserProfile, previous_scheme_id: str | None) -> None:
+        """Record one "a scheme newly became this user's topic" event — skipped when the pinned
+        scheme didn't actually change, so re-confirming the same scheme doesn't spam the log."""
+        if profile.pinned_scheme_id is None or profile.pinned_scheme_id == previous_scheme_id:
+            return
+        doc = self._schemes[profile.pinned_scheme_id]
+        status = evaluate(doc, profile.facts).status.value
+        self._activity_log.log(profile.user_id, scheme_id=profile.pinned_scheme_id, eligibility_status=status)
 
     async def handle_turn(self, *, user_id: str, transcript: str, language_code: str) -> str | None:
         profile = self._profile_store.get(user_id)
@@ -50,6 +62,7 @@ class Orchestrator:
         return await self._handle_scheme_turn(profile, transcript, language_code, intent)
 
     async def _handle_update_info(self, profile: UserProfile, transcript: str, language_code: str) -> str | None:
+        previous_scheme_id = profile.pinned_scheme_id
         extracted = await extract_entities(
             self._reasoning_provider, transcript, self._field_specs, list(self._schemes)
         )
@@ -61,6 +74,7 @@ class Orchestrator:
         if extracted.requested_scheme is not None:
             profile = pin_scheme(profile, extracted.requested_scheme)
         self._profile_store.save(profile)
+        self._log_activity_if_changed(profile, previous_scheme_id)
 
         update_summary = _describe_update(extracted, self._scheme_descriptions)
 
@@ -101,8 +115,10 @@ class Orchestrator:
                     user_message=f"Options: {options}",
                     language_code=language_code,
                 )
+            previous_scheme_id = profile.pinned_scheme_id
             profile = pin_scheme(profile, scheme_id)
             self._profile_store.save(profile)
+            self._log_activity_if_changed(profile, previous_scheme_id)
         else:
             scheme_id = profile.pinned_scheme_id
 

@@ -8,8 +8,10 @@ decisions, 105B for entity extraction, 105B Conversations for spoken replies).
 ## Plan
 
 **MVP scope:** 5 schemes (Widow Pension, PM-KISAN, Ayushman Bharat PM-JAY, PDS, VB-G RAM G) made
-reliable across 4 of Prisma's 10 supported languages (Hindi, English, Tamil, Telugu). The other
-schemes/languages are roadmap, not built — a narrow, polished demo beats a broad, shaky one.
+reliable across the 10 languages Sarvam and Gnani both support (Hindi, English, Bengali, Gujarati,
+Kannada, Malayalam, Marathi, Punjabi, Tamil, Telugu — Sarvam's Odia support is left out since
+Gnani's STT/TTS doesn't cover it). The other schemes are roadmap, not built — a narrow, polished
+demo beats a broad, shaky one.
 VB-G RAM G (Viksit Bharat - Guarantee for Rozgar and Ajeevika Mission (Gramin) Act, 2025) supersedes
 MGNREGA; its actual provisions aren't verified yet, see `src/adhikar/schemes/data/vb_g_ram_g.json`.
 

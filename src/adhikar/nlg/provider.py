@@ -4,10 +4,18 @@ from sarvamai.core.api_error import ApiError
 from .base import ConversationProvider
 from .exceptions import NLGError, NLGRequestError
 
-# MVP scope per README: 4 of Prisma's 10 supported languages.
+# The 10 languages Sarvam and Gnani both support (their intersection) — Sarvam additionally
+# supports Odia, but Gnani's STT/TTS does not, so it's left out here to keep the voice pipeline
+# end-to-end in every language this app offers.
 _LANGUAGE_NAMES = {
     "hi-IN": "Hindi",
     "en-IN": "English",
+    "bn-IN": "Bengali",
+    "gu-IN": "Gujarati",
+    "kn-IN": "Kannada",
+    "ml-IN": "Malayalam",
+    "mr-IN": "Marathi",
+    "pa-IN": "Punjabi",
     "ta-IN": "Tamil",
     "te-IN": "Telugu",
 }
