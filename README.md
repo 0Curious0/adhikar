@@ -51,6 +51,8 @@ See `CLAUDE.md` for architecture details and decisions behind the above.
 
 ## Running this project
 
+Live Link : https://get-adhikar.vercel.app
+
 Backend:
 
 ```bash
