@@ -224,6 +224,35 @@ button.header__nav-link {
   }
 }
 
+@media (max-width: 480px) {
+  .header {
+    padding: 0 16px;
+    gap: 10px;
+  }
+  .header__emblem {
+    width: 34px;
+    height: 34px;
+  }
+  .header__title {
+    font-size: 20px;
+  }
+  .header__tagline {
+    font-size: 10px;
+  }
+  .header__controls {
+    gap: 6px;
+  }
+  .header__language-btn {
+    padding: 0 8px;
+    gap: 4px;
+  }
+  /* Icon + chevron only on narrow phones — the language name itself (longest: "ગુજરાતી") is
+     what was forcing the header to wrap to a second line alongside the brand + menu button. */
+  .header__language-btn span {
+    display: none;
+  }
+}
+
 /* ===== Body layout ===== */
 
 .app__body {
@@ -253,6 +282,13 @@ button.header__nav-link {
 @media (max-width: 1023px) {
   .app__body {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .app__body {
+    padding: 20px 16px;
+    gap: 24px;
   }
 }
 
@@ -441,6 +477,15 @@ button.header__nav-link {
   }
 }
 
+@media (max-width: 480px) {
+  .hero__greeting {
+    font-size: 24px;
+  }
+  .hero__subtitle {
+    font-size: 15px;
+  }
+}
+
 /* ===== Back link (Voice / Chat pages) ===== */
 
 .back-link {
@@ -471,6 +516,12 @@ button.header__nav-link {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+@media (max-width: 480px) {
+  .interaction-panel {
+    padding: 16px;
+  }
 }
 
 .voice-mode {
